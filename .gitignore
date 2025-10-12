@@ -1,0 +1,18 @@
+# Archivos y carpetas de IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+# Archivos de sistema
+.DS_Store
+# Archivos de compilación de Java
+target/
+bin/
+# Archivos de logs
+*.log
+# Dependencias descargadas
+.gradle/
+build/
+# Otros
+*.class
+
