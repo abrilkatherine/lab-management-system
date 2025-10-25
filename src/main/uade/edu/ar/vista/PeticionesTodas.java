@@ -24,6 +24,14 @@ public class PeticionesTodas {
     private PeticionesTodas peticionesTodas;
 
     private DefaultTableModel tableModel;
+    
+    // Modelo de tabla personalizado que no permite edición directa
+    private class NonEditableTableModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // No permitir edición directa de ninguna celda
+        }
+    }
     private SucursalYUsuarioController sucursalYUsuarioController;
     private PacienteController pacienteController;
     private List<PeticionDto> peticionesLista;
@@ -33,7 +41,7 @@ public class PeticionesTodas {
         this.sucursalYUsuarioController = sucursalYUsuarioController;
         this.pacienteController = pacienteController;
         this.peticionesTodas = this;
-        this.tableModel = new DefaultTableModel();
+        this.tableModel = new NonEditableTableModel();
     }
 
     public JPanel createPanel() {

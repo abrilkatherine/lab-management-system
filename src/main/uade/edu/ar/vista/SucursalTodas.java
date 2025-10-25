@@ -19,6 +19,14 @@ public class SucursalTodas {
     private SucursalYUsuarioController sucursalYUsuarioController;
 
     private DefaultTableModel tableModel;
+    
+    // Modelo de tabla personalizado que no permite edición directa
+    private class NonEditableTableModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // No permitir edición directa de ninguna celda
+        }
+    }
 
     private SucursalTodas sucursalTodas;
 
@@ -27,7 +35,7 @@ public class SucursalTodas {
     public SucursalTodas(SucursalYUsuarioController sucursalYUsuarioController) {
         this.sucursalYUsuarioController = sucursalYUsuarioController;
         this.sucursalTodas = this;
-        this.tableModel = new DefaultTableModel();
+        this.tableModel = new NonEditableTableModel();
     }
 
     public JPanel createPanel() {

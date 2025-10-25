@@ -15,6 +15,14 @@ import java.util.List;
 public class UsuariosTodos {
 
     private DefaultTableModel tableModel;
+    
+    // Modelo de tabla personalizado que no permite edición directa
+    private class NonEditableTableModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // No permitir edición directa de ninguna celda
+        }
+    }
     private SucursalYUsuarioController sucursalYUsuarioController;
     private List<UsuarioDto> usuarioDtoList;
     private UsuariosTodos usuariosTodos;
@@ -22,7 +30,7 @@ public class UsuariosTodos {
     public UsuariosTodos(SucursalYUsuarioController sucursalYUsuarioController) {
         this.sucursalYUsuarioController = sucursalYUsuarioController;
         this.usuariosTodos = this;
-        this.tableModel = new DefaultTableModel();
+        this.tableModel = new NonEditableTableModel();
     }
 
     public JPanel createPanel() {

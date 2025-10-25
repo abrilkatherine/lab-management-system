@@ -16,6 +16,14 @@ public class PacientesTodas {
 
     private PacienteController pacienteController;
     private DefaultTableModel tableModel;
+    
+    // Modelo de tabla personalizado que no permite edición directa
+    private class NonEditableTableModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // No permitir edición directa de ninguna celda
+        }
+    }
 
     private PacientesTodas pacientesTodas;
 
@@ -24,7 +32,7 @@ public class PacientesTodas {
     public PacientesTodas(PacienteController pacienteController) {
         this.pacienteController = pacienteController;
         this.pacientesTodas = this;
-        this.tableModel = new DefaultTableModel();
+        this.tableModel = new NonEditableTableModel();
     }
 
     public JPanel createPanel() {
