@@ -132,9 +132,13 @@ public abstract class GenericDAO<T> {
             JsonParser parser = new JsonParser();
             Gson g = new Gson();
 
+            // Obtener el ID del objeto usando reflexión
+            int objId = getObjectId(obj);
+
             while ((line = b.readLine()) != null) {
                 JsonObject jsonObject = parser.parse(line).getAsJsonObject();
-                if (g.fromJson(jsonObject, clase).equals(obj)) {
+                // Buscar por ID en lugar de comparar objetos completos
+                if (Integer.parseInt(jsonObject.get("id").toString()) == objId) {
                     line = g.toJson(obj);
                     wasUpdate = true;
                 }
@@ -154,6 +158,12 @@ public abstract class GenericDAO<T> {
             System.out.println("Problem reading file.");
         }
         return wasUpdate;
+    }
+
+    private int getObjectId(T obj) throws Exception {
+        // Usar reflexión para obtener el ID del objeto
+        java.lang.reflect.Method getIdMethod = obj.getClass().getMethod("getId");
+        return (Integer) getIdMethod.invoke(obj);
     }
 
     public T search(int id) throws FileNotFoundException {

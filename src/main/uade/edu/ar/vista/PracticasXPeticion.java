@@ -190,7 +190,9 @@ public class PracticasXPeticion extends JDialog {
         }
 
         private PracticaDto obtenerPracticaPorId(int practiceId) {
-            for (PracticaDto practica : practicas) {
+            // Obtener las prácticas actualizadas del controlador
+            List<PracticaDto> practicasActualizadas = peticionController.getAllPracticasDePeticion(idPeticion);
+            for (PracticaDto practica : practicasActualizadas) {
                 if (practica.getId() == practiceId) {
                     return practica;
                 }
