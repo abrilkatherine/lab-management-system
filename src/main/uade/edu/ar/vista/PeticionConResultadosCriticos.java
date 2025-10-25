@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import main.uade.edu.ar.util.StyleUtils;
+import main.uade.edu.ar.util.DateUtil;
 
 public class PeticionConResultadosCriticos {
     private DefaultTableModel tableModel;
@@ -77,7 +78,7 @@ public class PeticionConResultadosCriticos {
                 peticion.getObraSocial(), 
                 peticion.getPaciente().getNombre() + " " + peticion.getPaciente().getApellido(),
                 "Sucursal " + peticion.getSucursal().getNumero(),
-                peticion.getFechaCarga().toString()
+                DateUtil.formatDateWithTime(peticion.getFechaCarga())
             });
         }
 

@@ -3,20 +3,25 @@ package main.uade.edu.ar.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateUtil {
 
     private DateUtil(){
     }
 
-    public static Date getFecha(String fecha) {
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            return formatoFecha.parse(fecha);
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+    /**
+     * Formatea una fecha para mostrar solo día/mes/año y hora
+     * @param fecha La fecha a formatear
+     * @return String con formato dd/MM/yyyy HH:mm
+     */
+    public static String formatDateWithTime(Date fecha) {
+        if (fecha == null) {
+            return "";
         }
-        return null;
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
+        return formatoFecha.format(fecha);
     }
 
 }

@@ -8,14 +8,25 @@ import main.uade.edu.ar.enums.Roles;
 import main.uade.edu.ar.enums.TipoResultado;
 
 import java.util.List;
-
-import static main.uade.edu.ar.util.DateUtil.getFecha;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class LabManagementSystemTests {
     
     private PeticionController peticionesController;
     private SucursalYUsuarioController sucursalYUsuarioController;
     private PacienteController pacienteController;
+    
+    // Helper method to create dates for tests
+    private Date createDate(String dateString) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            return format.parse(dateString);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing date: " + dateString, e);
+        }
+    }
 
     public LabManagementSystemTests() throws Exception {
         // Verificar que el sistema esté inicializado
@@ -43,7 +54,7 @@ public class LabManagementSystemTests {
     public void testPacientes() throws Exception {
         System.out.println("📋 Ejecutando tests de pacientes...");
         
-        UsuarioDto responsable = new UsuarioDto(1, "Test", "1dh68lpxz*", getFecha("1990-06-04"), Roles.ADMINISTRADOR);
+        UsuarioDto responsable = new UsuarioDto(1, "Test", "1dh68lpxz*", createDate("1990-06-04"), Roles.ADMINISTRADOR);
         SucursalDto sucursal = new SucursalDto(1, 100, "Av Santa Fe", responsable);
         PacienteDto paciente = new PacienteDto(1, 22, Genero.MASCULINO, "Test", 1234, "dom", "garciatest@gmail.com", "Garcia");
 
@@ -53,7 +64,7 @@ public class LabManagementSystemTests {
         );
 
         peticionesController.borrarPeticion(1);
-        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente, practicas));
+        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente, practicas));
 
         pacienteController.crearPaciente(paciente);
 
@@ -67,14 +78,14 @@ public class LabManagementSystemTests {
     public void testPeticiones() throws Exception {
         System.out.println("📋 Ejecutando tests de peticiones...");
         
-        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "", getFecha("1990-06-04"), Roles.ADMINISTRADOR);
+        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "", createDate("1990-06-04"), Roles.ADMINISTRADOR);
         SucursalDto sucursal = new SucursalDto(1, 100, "Av Santa Fe", responsable);
         PracticaDto practica = new PracticaDto(1, 999, "Análisis", 3, 3);
         PacienteDto paciente = new PacienteDto(1, 22, Genero.MASCULINO, "Test", 1234, "dom", "test@gmail.com", "Testing");
 
-        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente));
-        peticionesController.crearPeticion(new PeticionDto(2, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente, List.of(practica)));
-        peticionesController.modificarPeticion(new PeticionDto(2, "OSDE", getFecha("2023-05-01"), getFecha("2023-05-02"), sucursal, paciente, List.of(practica)));
+        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente));
+        peticionesController.crearPeticion(new PeticionDto(2, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente, List.of(practica)));
+        peticionesController.modificarPeticion(new PeticionDto(2, "OSDE", createDate("2023-05-01"), createDate("2023-05-02"), sucursal, paciente, List.of(practica)));
         peticionesController.borrarPeticion(2);
 
         peticionesController.crearPractica(1, practica);
@@ -91,7 +102,7 @@ public class LabManagementSystemTests {
     public void testUsuarios() throws Exception {
         System.out.println("👥 Ejecutando tests de usuarios...");
         
-        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "", getFecha("1990-06-04"), Roles.ADMINISTRADOR);
+        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "", createDate("1990-06-04"), Roles.ADMINISTRADOR);
         SucursalDto sucursal = new SucursalDto(1, 100, "Av Santa Fe", responsable);
         SucursalDto sucursalA = new SucursalDto(2, 100, "Av Santa Fe", responsable);
         PacienteDto paciente = new PacienteDto(1, 22, Genero.MASCULINO, "Paciente test", 12349977, "dom", "pereztest@gmail.com", "Perez");
@@ -102,10 +113,10 @@ public class LabManagementSystemTests {
         );
 
         peticionesController.borrarPeticion(1);
-        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente, practicas));
+        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente, practicas));
 
-        sucursalYUsuarioController.crearUsuario(new UsuarioDto(1, "Didy", "", getFecha("1990-06-04"), Roles.LABORTISTA));
-        sucursalYUsuarioController.modificarUsuario(new UsuarioDto(1, "Didy", "", getFecha("1990-06-04"), Roles.ADMINISTRADOR));
+        sucursalYUsuarioController.crearUsuario(new UsuarioDto(1, "Didy", "", createDate("1990-06-04"), Roles.LABORTISTA));
+        sucursalYUsuarioController.modificarUsuario(new UsuarioDto(1, "Didy", "", createDate("1990-06-04"), Roles.ADMINISTRADOR));
         sucursalYUsuarioController.eliminarUsuario(1);
 
         sucursalYUsuarioController.crearSucursal(sucursal);
@@ -120,7 +131,7 @@ public class LabManagementSystemTests {
     public void testPeticionesConValoresReservados() throws Exception {
         System.out.println("🔬 Ejecutando tests de peticiones con valores reservados...");
         
-        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "13jfso*jd37", getFecha("1990-06-04"), Roles.ADMINISTRADOR);
+        UsuarioDto responsable = new UsuarioDto(1, "Hugo", "13jfso*jd37", createDate("1990-06-04"), Roles.ADMINISTRADOR);
         SucursalDto sucursal = new SucursalDto(1, 100, "Av Santa Fe", responsable);
         PracticaDto practica1 = new PracticaDto(1, 999, "Análisis de sangre", 3, 3);
         PracticaDto practica2 = new PracticaDto(2, 999, "Análisis de sangre", 3, 3);
@@ -129,8 +140,8 @@ public class LabManagementSystemTests {
         ResultadoDto resultado1 = new ResultadoDto("40", TipoResultado.CRITICO);
         ResultadoDto resultado2 = new ResultadoDto("40", TipoResultado.RESERVADO);
 
-        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente));
-        peticionesController.crearPeticion(new PeticionDto(2, "Swiss Medical", getFecha("2023-06-01"), getFecha("2023-06-02"), sucursal, paciente, List.of(practica2)));
+        peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente));
+        peticionesController.crearPeticion(new PeticionDto(2, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente, List.of(practica2)));
 
         peticionesController.crearPractica(1, practica1);
         peticionesController.crearPractica(1, practica3);

@@ -6,7 +6,6 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.SucursalDto;
-import static main.uade.edu.ar.util.DateUtil.getFecha;
 
 
 import javax.swing.*;
@@ -17,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class AgregarPeticion extends JDialog {
     private JPanel contentPane;
