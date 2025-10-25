@@ -130,7 +130,8 @@ public class EditarUsuario extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        setSize(400, 300); // Establecer el tamaño personalizado aquí
+        setSize(450, 400); // Tamaño más grande para mostrar todos los campos y el botón
+        setLocationRelativeTo(null); // Centrar el diálogo en la pantalla
     }
 
     private JTextField createPlaceholderTextField(String placeholderText) {

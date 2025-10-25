@@ -58,6 +58,7 @@ public class PacientesTodas {
         // Crear la tabla de pacientes con estilos
         JTable table = createTable();
         StyleUtils.styleTable(table);
+        table.setRowHeight(35); // Altura de fila más grande para los iconos
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -80,9 +81,13 @@ public class PacientesTodas {
 
         // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(2).setPreferredWidth(50); // Ancho de la columna "Editar"
-        table.getColumnModel().getColumn(3).setPreferredWidth(70); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
 
+        // Configurar renderer personalizado para las columnas de acciones
+        table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
+        table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
+        
         // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -94,7 +99,6 @@ public class PacientesTodas {
                 if (column == 2 && row < table.getRowCount()) {
                     int valorColumnaDNI = (int) tableModel.getValueAt(row, 1);
 
-
                     PacienteDto paciente = null;
                     for (PacienteDto p : pacienteDtoList) {
                         if (p.getDni() == valorColumnaDNI) {
@@ -104,7 +108,6 @@ public class PacientesTodas {
                     }
                     // Crear y mostrar el diálogo de editar paciente
                     if (paciente != null) {
-                        // Crear y mostrar el diálogo de editar paciente, pasando el paciente correspondiente
                         EditarPaciente editarPaciente = new EditarPaciente(paciente, pacienteController, pacientesTodas);
                         editarPaciente.setVisible(true);
                     }
@@ -112,12 +115,26 @@ public class PacientesTodas {
 
                 // Verificar si se hizo clic en la columna "Eliminar"
                 if (column == 3 && row < table.getRowCount()) {
-                    int confirm = JOptionPane.showConfirmDialog(table, "¿Estás seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        // Eliminar la fila correspondiente
-                        int valorColumnaDNI = (int) tableModel.getValueAt(row, 1);
-
-
+                    int valorColumnaDNI = (int) tableModel.getValueAt(row, 1);
+                    String nombrePaciente = (String) tableModel.getValueAt(row, 0);
+                    
+                    // Diálogo de confirmación con botones personalizados
+                    Object[] options = {"❌ No", "✅ Sí"};
+                    int confirm = JOptionPane.showOptionDialog(
+                        table,
+                        "¿Estás seguro de que deseas eliminar al paciente '" + nombrePaciente + "'?\n\nEsta acción no se puede deshacer.",
+                        "⚠️ Confirmar Eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0] // "No" como opción por defecto
+                    );
+                    
+                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
+                    System.out.println("DEBUG: Valor de confirm = " + confirm);
+                    if (confirm == 1) { // "✅ Sí" está en la posición 1
+                        System.out.println("DEBUG: Usuario confirmó eliminación");
                         PacienteDto paciente = null;
                         for (PacienteDto p : pacienteDtoList) {
                             if (p.getDni() == valorColumnaDNI) {
@@ -126,17 +143,39 @@ public class PacientesTodas {
                             }
                         }
                         if (paciente != null) {
+                            System.out.println("DEBUG: Paciente encontrado, intentando eliminar...");
                             try{
                                 pacienteController.borrarPaciente(paciente.getId());
                                 tableModel.removeRow(row);
+                                
+                                // Mostrar mensaje de éxito
+                                JOptionPane.showMessageDialog(
+                                    table,
+                                    "✅ Paciente '" + nombrePaciente + "' eliminado correctamente.",
+                                    "Eliminación Exitosa",
+                                    JOptionPane.INFORMATION_MESSAGE
+                                );
+                                System.out.println("DEBUG: Paciente eliminado exitosamente");
                             }
                             catch (Exception exception){
-                                exception.printStackTrace(); // Imprimir información de la excepción
-                                // Opcional: Mostrar un mensaje de error al usuario
-                                JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                                System.out.println("DEBUG: Error al eliminar paciente: " + exception.getMessage());
+                                exception.printStackTrace();
+                                // Mostrar mensaje más claro sobre por qué no se puede eliminar
+                                String mensaje = "❌ No se puede eliminar al paciente '" + nombrePaciente + "'\n\n" +
+                                              "⚠️ Razón: El paciente tiene peticiones con resultados asociados.\n" +
+                                              "Para eliminar este paciente, primero debe eliminar todas sus peticiones con resultados.";
+                                JOptionPane.showMessageDialog(
+                                    table, 
+                                    mensaje, 
+                                    "⚠️ No se puede eliminar", 
+                                    JOptionPane.WARNING_MESSAGE
+                                );
                             }
-
+                        } else {
+                            System.out.println("DEBUG: Paciente no encontrado");
                         }
+                    } else {
+                        System.out.println("DEBUG: Usuario canceló eliminación (confirm = " + confirm + ")");
                     }
                 }
             }

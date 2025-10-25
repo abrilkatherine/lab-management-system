@@ -123,7 +123,7 @@ public class EditarPeticion extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         contentPane.add(fechaInicio, gbc);
 
-        fechaCarga = new JTextField();
+        fechaCarga = createPlaceholderTextField("dd/MM/yyyy (ej: 20/04/2025)");
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.weightx = 1.0;
@@ -135,7 +135,7 @@ public class EditarPeticion extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         contentPane.add(fechaFin, gbc);
 
-        fechaEntrega = new JTextField();
+        fechaEntrega = createPlaceholderTextField("dd/MM/yyyy (ej: 21/04/2025)");
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.weightx = 1.0;
@@ -173,7 +173,8 @@ public class EditarPeticion extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        setSize(400, 300); // Establecer el tamaño personalizado aquí
+        setSize(450, 400); // Tamaño más grande para mostrar todos los campos y el botón
+        setLocationRelativeTo(null); // Centrar el diálogo en la pantalla
     }
 
     private void setListeners() {
@@ -192,8 +193,20 @@ public class EditarPeticion extends JDialog {
 
     private void cargarDatos() {
         obraSocial.setText(peticionDto.getObraSocial());
-        fechaCarga.setText(String.valueOf(peticionDto.getFechaCarga()));
-        fechaEntrega.setText(String.valueOf(peticionDto.getFechaEntrega()));
+        
+        // Cargar fechas solo si no son null
+        if (peticionDto.getFechaCarga() != null) {
+            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            fechaCarga.setText(displayFormat.format(peticionDto.getFechaCarga()));
+            fechaCarga.setForeground(Color.BLACK);
+        }
+        
+        if (peticionDto.getFechaEntrega() != null) {
+            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            fechaEntrega.setText(displayFormat.format(peticionDto.getFechaEntrega()));
+            fechaEntrega.setForeground(Color.BLACK);
+        }
+        
         sucursalComboBox.setSelectedItem(getDisplayText(peticionDto.getSucursal()));
         pacienteComboBox.setSelectedItem(getDisplayTextPacientes(peticionDto.getPaciente()));
     }
@@ -214,26 +227,80 @@ public class EditarPeticion extends JDialog {
         String fechaC = fechaCarga.getText();
         String fechaI = fechaEntrega.getText();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        // Intentar múltiples formatos de fecha para mayor flexibilidad
+        SimpleDateFormat[] dateFormats = {
+            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH),  // Formato latinoamericano
+            new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH),  // Formato americano
+            new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH),  // Formato ISO
+            new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)  // Formato completo existente
+        };
+        
         Date fechaCarga = null;
         Date fechaEntrega = null;
 
+        // Parsear fecha de carga
         if (!fechaC.isEmpty() && !fechaC.equals("MMM dd, yyyy, hh:mm:ss a")) {
-            try {
-                fechaCarga = dateFormat.parse(fechaC);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            for (SimpleDateFormat format : dateFormats) {
+                try {
+                    fechaCarga = format.parse(fechaC);
+                    break;
+                } catch (ParseException e) {
+                    // Continuar con el siguiente formato
+                }
+            }
+            
+            if (fechaCarga == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ Error: Formato de fecha de carga inválido.\n\n" +
+                    "📅 Formatos aceptados:\n" +
+                    "• dd/MM/yyyy (ej: 20/04/2020)\n" +
+                    "• MM/dd/yyyy (ej: 04/20/2020)\n" +
+                    "• yyyy-MM-dd (ej: 2020-04-20)\n\n" +
+                    "Fecha ingresada: " + fechaC,
+                    "⚠️ Formato de Fecha Inválido", 
+                    JOptionPane.WARNING_MESSAGE);
+                return;
             }
         }
 
+        // Parsear fecha de entrega
         if (!fechaI.isEmpty() && !fechaI.equals("MMM dd, yyyy, hh:mm:ss a")) {
-            try {
-                fechaEntrega = dateFormat.parse(fechaI);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            for (SimpleDateFormat format : dateFormats) {
+                try {
+                    fechaEntrega = format.parse(fechaI);
+                    break;
+                } catch (ParseException e) {
+                    // Continuar con el siguiente formato
+                }
             }
+            
+            if (fechaEntrega == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ Error: Formato de fecha de entrega inválido.\n\n" +
+                    "📅 Formatos aceptados:\n" +
+                    "• dd/MM/yyyy (ej: 20/04/2020)\n" +
+                    "• MM/dd/yyyy (ej: 04/20/2020)\n" +
+                    "• yyyy-MM-dd (ej: 2020-04-20)\n\n" +
+                    "Fecha ingresada: " + fechaI,
+                    "⚠️ Formato de Fecha Inválido", 
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+
+        // Validación: La fecha de entrega no puede ser anterior a la fecha de carga
+        if (fechaCarga != null && fechaEntrega != null && fechaEntrega.before(fechaCarga)) {
+            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            JOptionPane.showMessageDialog(
+                this, 
+                "❌ Error: La fecha de entrega no puede ser anterior a la fecha de carga.\n\n" +
+                "📅 Fecha de carga: " + displayFormat.format(fechaCarga) + "\n" +
+                "📅 Fecha de entrega: " + displayFormat.format(fechaEntrega) + "\n\n" +
+                "Por favor, corrija las fechas e intente nuevamente.",
+                "⚠️ Fechas Inválidas", 
+                JOptionPane.WARNING_MESSAGE
+            );
+            return; // No continuar con la modificación de la petición
         }
 
         PeticionDto nuevaPeticion = new PeticionDto(peticionDto.getId(), obra, fechaCarga, fechaEntrega, sucursal, paciente, peticionDto.getPracticas());
@@ -267,6 +334,32 @@ public class EditarPeticion extends JDialog {
             }
         }
         return null;
+    }
+
+    private JTextField createPlaceholderTextField(String placeholderText) {
+        JTextField textField = new JTextField();
+        textField.setForeground(Color.GRAY);
+        textField.setText(placeholderText);
+        
+        textField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (textField.getText().equals(placeholderText)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+            
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setText(placeholderText);
+                    textField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        
+        return textField;
     }
 
     private void onCancel() {

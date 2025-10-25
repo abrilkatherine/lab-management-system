@@ -173,7 +173,8 @@ public class AgregarPaciente extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        setSize(400, 300); // Establecer el tamaño personalizado aquí
+        setSize(450, 500); // Tamaño más grande para mostrar todos los campos y el botón
+        setLocationRelativeTo(null); // Centrar el diálogo en la pantalla
     }
 
     private JTextField createPlaceholderTextField(String placeholderText) {
@@ -219,23 +220,67 @@ public class AgregarPaciente extends JDialog {
         String dniPaciente = dniTextField.getText();
         String edadPaciente = edadTextField.getText();
         String domicilioPaciente = domicilioTextField.getText();
+        
+        // Validar que los campos no estén vacíos o contengan placeholders
+        if (nombrePaciente.isEmpty() || nombrePaciente.equals("Ingrese el nombre del paciente")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el nombre del paciente", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (apellidoPaciente.isEmpty() || apellidoPaciente.equals("Ingrese el apellido")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el apellido", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (emailPaciente.isEmpty() || emailPaciente.equals("Ingrese el mail")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el email", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (dniPaciente.isEmpty() || dniPaciente.equals("Ingrese el dni")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el DNI", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (edadPaciente.isEmpty() || edadPaciente.equals("Ingrese la edad")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese la edad", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (domicilioPaciente.isEmpty() || domicilioPaciente.equals("Ingrese el domicilio")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el domicilio", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Validar que se haya seleccionado un género
+        if (!generoRadioButtonMasculino.isSelected() && !generoRadioButtonFemenino.isSelected()) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, seleccione un género", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         Genero generoPaciente;
         if(generoRadioButtonMasculino.isSelected()){
             generoPaciente = Genero.MASCULINO;
         } else {
             generoPaciente = Genero.FEMENINO;
         }
-        Random random = new Random();
-        int randomId = random.nextInt(1, 900);
-        PacienteDto nuevoPaciente = new PacienteDto(randomId, Integer.parseInt(edadPaciente), generoPaciente, nombrePaciente, Integer.parseInt(dniPaciente), domicilioPaciente, emailPaciente, apellidoPaciente);
+        
         try {
+            Random random = new Random();
+            int randomId = random.nextInt(1, 900);
+            PacienteDto nuevoPaciente = new PacienteDto(randomId, Integer.parseInt(edadPaciente), generoPaciente, nombrePaciente, Integer.parseInt(dniPaciente), domicilioPaciente, emailPaciente, apellidoPaciente);
+            
             pacienteController.crearPaciente(nuevoPaciente);
             pacientesTodas.actualizarTablaPacientes();
+            
+            JOptionPane.showMessageDialog(this, "✅ Paciente creado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "❌ Error: La edad y el DNI deben ser números válidos", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             // Manejo de la excepción
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "❌ Error al crear el paciente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
