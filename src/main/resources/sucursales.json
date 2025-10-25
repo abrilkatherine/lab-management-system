@@ -1,0 +1,2 @@
+{"id":1,"numero":100,"direccion":"Av. Santa Fe 1234","responsableTecnico":{"id":1,"nombre":"Admin","contrasenia":"admin123","nacimiento":"1990-01-01T00:00:00.000Z","rol":"ADMINISTRADOR"}}
+{"id":2,"numero":200,"direccion":"Av. Corrientes 5678","responsableTecnico":{"id":2,"nombre":"Recepcionista","contrasenia":"recepcion123","nacimiento":"1992-05-15T00:00:00.000Z","rol":"RECEPCION"}}
