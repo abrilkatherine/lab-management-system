@@ -1,2 +1,2 @@
-{"id":878,"edad":12,"genero":"MASCULINO","nombre":"nasser","dni":2424,"domicilio":"ouhoi","email":"nas@gmail.com","apellido":"elbacha"}
-{"id":453,"edad":26,"genero":"FEMENINO","nombre":"Ingrese el nombre del paciente","dni":41745969,"domicilio":"calle siempre viva","email":"abril@gmail.com","apellido":"Abril"}
+{"id":1,"nombre":"Juan","dni":12345678,"domicilio":"Calle Falsa 123","email":"juan@email.com","apellido":"Pérez","edad":30,"genero":"MASCULINO"}
+{"id":2,"nombre":"María","dni":87654321,"domicilio":"Av. Siempre Viva 456","email":"maria@email.com","apellido":"González","edad":25,"genero":"FEMENINO"}
