@@ -76,13 +76,17 @@ public class UsuariosTodos {
         // Obtener la lista de usuarios
         List<UsuarioDto> usuarios = sucursalYUsuarioController.getAllUsuarios();
         for (UsuarioDto usuario : usuarios) {
-            tableModel.addRow(new Object[]{usuario.getNombre(), usuario.getRol(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{usuario.getNombre(), usuario.getRol(), "✏️", "🗑️"});
         }
 
         // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(2).setPreferredWidth(50); // Ancho de la columna "Editar"
-        table.getColumnModel().getColumn(3).setPreferredWidth(70); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
+
+        // Configurar renderer personalizado para las columnas de acciones
+        table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
+        table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
         // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
@@ -114,15 +118,26 @@ public class UsuariosTodos {
 
                 // Verificar si se hizo clic en la columna "Eliminar"
                 if (column == 3 && row < table.getRowCount()) {
-                    int confirm = JOptionPane.showConfirmDialog(table, "¿Estás seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        // Eliminar la fila correspondiente
-
-                        String nombreUsuario = tableModel.getValueAt(row, 0).toString();
-
+                    String nombreUsuario = (String) tableModel.getValueAt(row, 0);
+                    
+                    // Diálogo de confirmación con botones personalizados
+                    Object[] options = {"❌ No", "✅ Sí"};
+                    int confirm = JOptionPane.showOptionDialog(
+                        table,
+                        "¿Estás seguro de que deseas eliminar al usuario '" + nombreUsuario + "'?\n\nEsta acción no se puede deshacer.",
+                        "⚠️ Confirmar Eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0] // "No" como opción por defecto
+                    );
+                    
+                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
+                    if (confirm == 1) { // "✅ Sí" está en la posición 1
                         UsuarioDto usuario = null;
                         for (UsuarioDto u : usuarios) {
-                            if (u.getNombre() == nombreUsuario) {
+                            if (u.getNombre().equals(nombreUsuario)) {
                                 usuario = u;
                                 break;
                             }
@@ -131,13 +146,19 @@ public class UsuariosTodos {
                             try{
                                 sucursalYUsuarioController.eliminarUsuario(usuario.getId());
                                 tableModel.removeRow(row);
+                                
+                                // Mostrar mensaje de éxito
+                                JOptionPane.showMessageDialog(
+                                    table,
+                                    "✅ Usuario '" + nombreUsuario + "' eliminado correctamente.",
+                                    "Eliminación Exitosa",
+                                    JOptionPane.INFORMATION_MESSAGE
+                                );
                             }
                             catch (Exception exception){
-                                exception.printStackTrace(); // Imprimir información de la excepción
-                                // Opcional: Mostrar un mensaje de error al usuario
-                                 JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                                exception.printStackTrace();
+                                JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                             }
-
                         }
                     }
                 }
@@ -152,7 +173,7 @@ public class UsuariosTodos {
         tableModel.setRowCount(0); // Elimina todas las filas existentes en el modelo
         usuarioDtoList = sucursalYUsuarioController.getAllUsuarios();
         for (UsuarioDto usuario : usuarioDtoList) {
-            tableModel.addRow(new Object[]{usuario.getNombre(),  usuario.getRol(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{usuario.getNombre(),  usuario.getRol(), "✏️", "🗑️"});
         }
     }
 }

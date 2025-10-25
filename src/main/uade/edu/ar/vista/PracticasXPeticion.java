@@ -43,10 +43,10 @@ public class PracticasXPeticion extends JDialog {
         contentPane.add(tituloPanel, BorderLayout.NORTH);
 
         // Modelo de la tabla
-        tableModel = new DefaultTableModel(new Object[]{"Id", "Nombre", "Info", "Eliminar"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"🆔 Id", "📋 Nombre", "✏️ Editar", "🗑️ Eliminar"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2 || column == 3; // Columnas "Info" y "Eliminar" serán editables
+                return column == 2 || column == 3; // Columnas "Editar" y "Eliminar" serán editables
             }
         };
 
@@ -149,14 +149,37 @@ public class PracticasXPeticion extends JDialog {
                 } else if (columnIndex == 3) {
                     // Botón "Eliminar" - Obtener el ID de la práctica correspondiente al botón "Eliminar"
                     int practiceId = (int) practicasTable.getValueAt(rowIndex, 0); // Obtener el Id de la práctica
+                    String nombrePractica = (String) practicasTable.getValueAt(rowIndex, 1); // Obtener el nombre de la práctica
 
-                    int confirm = JOptionPane.showConfirmDialog(practicasTable, "¿Estás seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
+                    // Diálogo de confirmación con botones personalizados
+                    Object[] options = {"❌ No", "✅ Sí"};
+                    int confirm = JOptionPane.showOptionDialog(
+                        practicasTable,
+                        "¿Estás seguro de que deseas eliminar la práctica '" + nombrePractica + "'?\n\nEsta acción no se puede deshacer.",
+                        "⚠️ Confirmar Eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0] // "No" como opción por defecto
+                    );
+                    
+                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
+                    if (confirm == 1) { // "✅ Sí" está en la posición 1
                         try {
                             peticionController.borrarPractica(practiceId);
                             actualizarDatos();
+                            
+                            // Mostrar mensaje de éxito
+                            JOptionPane.showMessageDialog(
+                                practicasTable,
+                                "✅ Práctica '" + nombrePractica + "' eliminada correctamente.",
+                                "Eliminación Exitosa",
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
                         } catch (Exception exception) {
                             exception.printStackTrace();
+                            JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 }
@@ -191,7 +214,7 @@ public class PracticasXPeticion extends JDialog {
 
         for (PracticaDto practica : practicas) {
             // Agregar la práctica a la tabla
-            Object[] rowData = {practica.getId(), practica.getNombre(), "info", "Eliminar"};
+            Object[] rowData = {practica.getId(), practica.getNombre(), "✏️", "🗑️"};
             tableModel.addRow(rowData);
         }
     }
@@ -203,7 +226,7 @@ public class PracticasXPeticion extends JDialog {
 
         for (PracticaDto practica : practicas) {
             // Agregar la práctica a la tabla
-            Object[] rowData = {practica.getId(), practica.getNombre(), "info", "Eliminar"};
+            Object[] rowData = {practica.getId(), practica.getNombre(), "✏️", "🗑️"};
             tableModel.addRow(rowData);
         }
     }

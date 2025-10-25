@@ -34,6 +34,9 @@ public class AgregarSucursal extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Crear Nueva Sucursal");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

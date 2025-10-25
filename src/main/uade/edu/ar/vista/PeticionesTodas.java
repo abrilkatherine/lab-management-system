@@ -76,10 +76,10 @@ public class PeticionesTodas {
 
     private JTable createTable() {
         // Crear un modelo de tabla personalizado que haga que todas las celdas sean no editables
-        tableModel.addColumn("ID");
-        tableModel.addColumn("Practicas");
-        tableModel.addColumn("Editar");
-        tableModel.addColumn("Eliminar");
+        tableModel.addColumn("🆔 ID");
+        tableModel.addColumn("🔬 Prácticas");
+        tableModel.addColumn("✏️ Editar");
+        tableModel.addColumn("🗑️ Eliminar");
 
         // Agregar filas de ejemplo a la tabla
             peticionesLista = peticionController.getAllPeticiones();
@@ -90,8 +90,12 @@ public class PeticionesTodas {
 
         // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(2).setPreferredWidth(50); // Ancho de la columna "Editar"
-        //table.getColumnModel().getColumn(3).setPreferredWidth(70); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
+
+        // Configurar renderer personalizado para las columnas de acciones
+        table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
+        table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
         // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
@@ -139,9 +143,23 @@ public class PeticionesTodas {
 
                 // Verificar si se hizo clic en la columna "Eliminar"
                 if (column == 3 && row < table.getRowCount()) {
-                    int confirm = JOptionPane.showConfirmDialog(table, "¿Estás seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        int valorColumnaId = (int) tableModel.getValueAt(row, 0);
+                    int valorColumnaId = (int) tableModel.getValueAt(row, 0);
+                    
+                    // Diálogo de confirmación con botones personalizados
+                    Object[] options = {"❌ No", "✅ Sí"};
+                    int confirm = JOptionPane.showOptionDialog(
+                        table,
+                        "¿Estás seguro de que deseas eliminar la petición #" + valorColumnaId + "'?\n\nEsta acción no se puede deshacer.",
+                        "⚠️ Confirmar Eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0] // "No" como opción por defecto
+                    );
+                    
+                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
+                    if (confirm == 1) { // "✅ Sí" está en la posición 1
                         PeticionDto peticion = null;
                         for (PeticionDto p : peticionesLista) {
                             if (p.getId() == valorColumnaId) {
@@ -152,9 +170,17 @@ public class PeticionesTodas {
                         try{
                             peticionController.borrarPeticion(peticion.getId());
                             tableModel.removeRow(row);
+                            
+                            // Mostrar mensaje de éxito
+                            JOptionPane.showMessageDialog(
+                                table,
+                                "✅ Petición #" + valorColumnaId + " eliminada correctamente.",
+                                "Eliminación Exitosa",
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
                         }
                         catch (Exception exception){
-                            exception.printStackTrace(); // Imprimir información de la excepción
+                            exception.printStackTrace();
                             JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }

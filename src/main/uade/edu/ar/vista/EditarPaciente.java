@@ -100,19 +100,27 @@ public class EditarPaciente extends JDialog {
 
         ButtonGroup generoButtonGroup = new ButtonGroup();
 
+        // Crear un panel para los radio buttons de género con BoxLayout horizontal
+        JPanel generoPanel = new JPanel();
+        generoPanel.setLayout(new BoxLayout(generoPanel, BoxLayout.X_AXIS));
+        generoPanel.setBackground(contentPane.getBackground());
+        generoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         generoRadioButtonFemenino = new JRadioButton("Femenino");
+        generoRadioButtonMasculino = new JRadioButton("Masculino");
+        
+        generoButtonGroup.add(generoRadioButtonFemenino);
+        generoButtonGroup.add(generoRadioButtonMasculino);
+        
+        generoPanel.add(generoRadioButtonFemenino);
+        generoPanel.add(Box.createHorizontalStrut(10)); // Espacio fijo de 10px
+        generoPanel.add(generoRadioButtonMasculino);
+        
         gbc.gridx = 1;
         gbc.gridy = 4;
-        gbc.weightx = 1.0;
-        contentPane.add(generoRadioButtonFemenino, gbc);
-        generoButtonGroup.add(generoRadioButtonFemenino);
-
-        generoRadioButtonMasculino = new JRadioButton("Masculino");
-        gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.weightx = 1.0;
-        contentPane.add(generoRadioButtonMasculino, gbc);
-        generoButtonGroup.add(generoRadioButtonMasculino);
+        gbc.weightx = 0.0; // No expandir horizontalmente
+        gbc.anchor = GridBagConstraints.WEST;
+        contentPane.add(generoPanel, gbc);
 
         JLabel edadLabel = new JLabel("Edad:");
         gbc.gridx = 0;

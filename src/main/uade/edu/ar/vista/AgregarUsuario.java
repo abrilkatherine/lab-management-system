@@ -40,6 +40,9 @@ public class AgregarUsuario extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Crear Nuevo Usuario");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

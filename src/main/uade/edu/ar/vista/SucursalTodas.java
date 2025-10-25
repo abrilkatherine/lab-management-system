@@ -82,8 +82,12 @@ public class SucursalTodas {
 
         // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50); // Ancho de la columna "Editar"
-        table.getColumnModel().getColumn(2).setPreferredWidth(70); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(1).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Eliminar"
+
+        // Configurar renderer personalizado para las columnas de acciones
+        table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
+        table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
         // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
@@ -115,10 +119,23 @@ public class SucursalTodas {
 
                 // Verificar si se hizo clic en la columna "Eliminar"
                 if (column == 2 && row < table.getRowCount()) {
-                    int confirm = JOptionPane.showConfirmDialog(table, "¿Estás seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        // Eliminar la fila correspondiente
-                        int numero = (int) tableModel.getValueAt(row, 0);
+                    int numero = (int) tableModel.getValueAt(row, 0);
+                    
+                    // Diálogo de confirmación con botones personalizados
+                    Object[] options = {"❌ No", "✅ Sí"};
+                    int confirm = JOptionPane.showOptionDialog(
+                        table,
+                        "¿Estás seguro de que deseas eliminar la sucursal '" + numero + "'?\n\nEsta acción no se puede deshacer.",
+                        "⚠️ Confirmar Eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0] // "No" como opción por defecto
+                    );
+                    
+                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
+                    if (confirm == 1) { // "✅ Sí" está en la posición 1
                         SucursalDto sucursal = null;
                         for (SucursalDto s : sucursalDtoList) {
                             if (s.getNumero() == numero) {
@@ -130,15 +147,19 @@ public class SucursalTodas {
                             try {
                                 sucursalYUsuarioController.borrarSucursal(sucursal.getId());
                                 tableModel.removeRow(row);
+                                
+                                // Mostrar mensaje de éxito
+                                JOptionPane.showMessageDialog(
+                                    table,
+                                    "✅ Sucursal '" + numero + "' eliminada correctamente.",
+                                    "Eliminación Exitosa",
+                                    JOptionPane.INFORMATION_MESSAGE
+                                );
                             } catch (Exception exception) {
-                                exception.printStackTrace(); // Imprimir información de la excepción
-                                // Opcional: Mostrar un mensaje de error al usuario
-
+                                exception.printStackTrace();
                                 JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                             }
-
                         }
-
                     }
                 }
             }

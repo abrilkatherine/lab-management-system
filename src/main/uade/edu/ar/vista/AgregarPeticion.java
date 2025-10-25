@@ -70,6 +70,9 @@ public class AgregarPeticion extends JDialog {
 
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Crear Nueva Petición");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

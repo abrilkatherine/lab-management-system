@@ -44,12 +44,16 @@ public class AgregarPaciente extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Crear Nuevo Paciente");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
+
 
         // Nombre del paciente
         JLabel nombrePacienteLabel = new JLabel("Nombre del paciente:");
@@ -120,21 +124,28 @@ public class AgregarPaciente extends JDialog {
         gbc.weightx = 0.0;
         contentPane.add(generoLabel, gbc);
 
+        // Crear un panel para los radio buttons de género con BoxLayout horizontal
+        JPanel generoPanel = new JPanel();
+        generoPanel.setLayout(new BoxLayout(generoPanel, BoxLayout.X_AXIS));
+        generoPanel.setBackground(contentPane.getBackground());
+        generoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         generoRadioButtonMasculino = new JRadioButton("Masculino");
-        gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.weightx = 1.0;
-        contentPane.add(generoRadioButtonMasculino, gbc);
-
         generoRadioButtonFemenino = new JRadioButton("Femenino");
-        gbc.gridx = 2;
-        gbc.gridy = 5;
-        gbc.weightx = 1.0;
-        contentPane.add(generoRadioButtonFemenino, gbc);
-
+        
         generoButtonGroup = new ButtonGroup();
         generoButtonGroup.add(generoRadioButtonMasculino);
         generoButtonGroup.add(generoRadioButtonFemenino);
+        
+        generoPanel.add(generoRadioButtonMasculino);
+        generoPanel.add(Box.createHorizontalStrut(10)); // Espacio fijo de 10px
+        generoPanel.add(generoRadioButtonFemenino);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.weightx = 0.0; // No expandir horizontalmente
+        gbc.anchor = GridBagConstraints.WEST;
+        contentPane.add(generoPanel, gbc);
 
         JLabel domicilioLabel = new JLabel("Domicilio:");
         gbc.gridx = 0;
