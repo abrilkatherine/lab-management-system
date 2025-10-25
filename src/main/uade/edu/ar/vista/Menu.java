@@ -51,38 +51,11 @@ public class Menu {
         // Agregar el panel de barra de navegación al JFrame
         frame.add(navBarPanel, BorderLayout.NORTH);
 
-        // Crear un panel con CardLayout para contener las diferentes vistas
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
-
+        // Obtener el cardPanel de BarraNavegacion
+        cardPanel = barraNavegacion.getCardPanel();
+        
         // Agregar el panel con CardLayout al JFrame
         frame.add(cardPanel, BorderLayout.CENTER);
-
-        // Crear una instancia de SucursalTodas y obtener su panel
-        sucursalTodas = new SucursalTodas(sucursalYUsuarioController);
-        JPanel sucursalTodasPanel = sucursalTodas.createPanel();
-        cardPanel.add(sucursalTodasPanel, "SucursalTodas");
-
-        // Crear una instancia de PacientesTodas y obtener su panel
-        pacienteTodas = new PacientesTodas(pacienteController);
-        JPanel pacientesTodasPanel = pacienteTodas.createPanel();
-        cardPanel.add(pacientesTodasPanel, "PacientesTodas");
-
-
-        // Crear una instancia de PeticionesTodas y obtener su panel
-        peticionesTodas = new PeticionesTodas(peticionController, sucursalYUsuarioController, pacienteController);
-        JPanel peticionesTodasPanel = peticionesTodas.createPanel();
-        cardPanel.add(peticionesTodasPanel, "PeticionesTodas");
-
-        // Crear una instancia de PeticionesTodas y obtener su panel
-        peticionConResultadoCriticos = new PeticionConResultadosCriticos(peticionController, sucursalYUsuarioController, pacienteController);
-        JPanel peticionConResultadoCriticosPanel = peticionConResultadoCriticos.createPanel();
-        cardPanel.add(peticionConResultadoCriticosPanel, "PeticionConResultadoCriticos");
-
-        // Crear una instancia de UsuariosTodos y obtener su panel
-        usuariosTodos = new UsuariosTodos(sucursalYUsuarioController);
-        JPanel usuariosTodosPanel = usuariosTodos.createPanel();
-        cardPanel.add(usuariosTodosPanel, "UsuariosTodos");
 
 
 

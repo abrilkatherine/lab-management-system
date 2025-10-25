@@ -71,12 +71,13 @@ public class BarraNavegacion {
         cardPanel.add(new PeticionConResultadosCriticos(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "PeticionConResultadoCriticos");
         cardPanel.add(new UsuariosTodos(sucursalYUsuarioController).createPanel(), "usuariosTodos");
 
-        // Agregar el panel del menú y el panel con CardLayout al panel principal
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(menuPanel, BorderLayout.NORTH);
-        mainPanel.add(cardPanel, BorderLayout.CENTER);
+        // Solo retornar el panel del menú, NO el cardPanel
+        return menuPanel;
+    }
 
-        return mainPanel;
+    // Método para obtener el cardPanel
+    public JPanel getCardPanel() {
+        return cardPanel;
     }
 
     // Método de utilidad para crear botones
