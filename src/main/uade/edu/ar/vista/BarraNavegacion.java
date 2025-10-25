@@ -46,7 +46,7 @@ public class BarraNavegacion {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setOpaque(false);
         
-        JLabel logoLabel = new JLabel("🏥 Sistema de Gestión de Laboratorio");
+        JLabel logoLabel = new JLabel("🏥 Lab Management System");
         logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         logoLabel.setForeground(StyleUtils.WHITE);
         topPanel.add(logoLabel);

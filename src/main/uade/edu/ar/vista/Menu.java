@@ -45,7 +45,7 @@ public class Menu {
         StyleUtils.setModernLookAndFeel();
         
         // Crear una instancia de JFrame para el menú
-        JFrame frame = new JFrame("🏥 Sistema de Gestión de Laboratorio");
+        JFrame frame = new JFrame("🏥 Lab Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setBackground(StyleUtils.WHITE);
