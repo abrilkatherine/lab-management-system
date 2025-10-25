@@ -204,7 +204,6 @@ public class EditarPaciente extends JDialog {
         edadTextField.setText(String.valueOf(paciente.getEdad()));
         domicilioTextField.setText(paciente.getDomicilio());
         if (paciente.getGenero() == Genero.FEMENINO) {
-            System.out.print(paciente.getGenero());
             generoRadioButtonFemenino.setSelected(true);
         } else if (paciente.getGenero() == Genero.MASCULINO) {
             generoRadioButtonMasculino.setSelected(true);

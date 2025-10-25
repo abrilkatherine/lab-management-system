@@ -1,9 +1,11 @@
 package main.uade.edu.ar.controller;
 
+import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dao.PeticionDao;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
+import main.uade.edu.ar.mappers.PacienteMapper;
 import main.uade.edu.ar.mappers.PeticionMapper;
 import main.uade.edu.ar.model.*;
 
@@ -79,9 +81,11 @@ public class PeticionController {
             peticion.setFechaCarga(peticionDTO.getFechaCarga());
             peticion.setFechaEntrega(peticionDTO.getFechaEntrega());
             peticion.setId(peticionDTO.getId());
-            peticion.setSucursal(peticion.getSucursal());
-            peticion.setPaciente(peticion.getPaciente());
-            peticion.setPracticas(peticion.getPracticas());
+            peticion.setSucursal(SucursalYUsuarioController.toModel(peticionDTO.getSucursal()));
+            peticion.setPaciente(PacienteMapper.toModel(peticionDTO.getPaciente()));
+            peticion.setPracticas(peticionDTO.getPracticas().stream()
+                    .map(PeticionMapper::toModel)
+                    .collect(Collectors.toList()));
             peticionDao.update(peticion);
         }
     }
