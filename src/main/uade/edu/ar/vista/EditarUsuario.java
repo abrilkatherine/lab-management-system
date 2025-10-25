@@ -8,9 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.text.ParseException;
 
 
 public class EditarUsuario extends JDialog {

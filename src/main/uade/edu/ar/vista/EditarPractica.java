@@ -3,17 +3,11 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
-import main.uade.edu.ar.dto.UsuarioDto;
-import main.uade.edu.ar.enums.Roles;
 import main.uade.edu.ar.enums.TipoResultado;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 
 public class EditarPractica extends JDialog {
     private JPanel contentPane;

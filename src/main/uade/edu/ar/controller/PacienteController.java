@@ -3,7 +3,6 @@ package main.uade.edu.ar.controller;
 import main.uade.edu.ar.dao.PacienteDao;
 import main.uade.edu.ar.dao.PeticionDao;
 import main.uade.edu.ar.dto.PacienteDto;
-import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.exceptions.PacienteYaExisteException;
 import main.uade.edu.ar.mappers.PacienteMapper;
 import main.uade.edu.ar.model.Paciente;

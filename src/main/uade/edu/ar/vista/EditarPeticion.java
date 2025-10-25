@@ -3,11 +3,11 @@ package main.uade.edu.ar.vista;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.text.ParseException;
 
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
@@ -15,9 +15,7 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.SucursalDto;
-import main.uade.edu.ar.dto.UsuarioDto;
 
-import static main.uade.edu.ar.util.DateUtil.getFecha;
 
 public class EditarPeticion extends JDialog {
     private JPanel contentPane;

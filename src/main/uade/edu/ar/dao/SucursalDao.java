@@ -2,8 +2,6 @@ package main.uade.edu.ar.dao;
 
 import main.uade.edu.ar.model.Sucursal;
 import main.uade.edu.ar.util.GenericDAO;
-import java.util.List;
-import java.util.ArrayList;
 
 public class SucursalDao extends GenericDAO<Sucursal> {
 

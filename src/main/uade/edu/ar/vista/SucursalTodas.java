@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
-import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.util.StyleUtils;
 

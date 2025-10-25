@@ -11,11 +11,7 @@ import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PeticionDto;
-import main.uade.edu.ar.dto.SucursalDto;
-import main.uade.edu.ar.model.Peticion;
-import java.lang.reflect.Type;
 import java.util.List;
-import main.uade.edu.ar.dao.PeticionDao;
 import main.uade.edu.ar.util.StyleUtils;
 
 public class PeticionesTodas {

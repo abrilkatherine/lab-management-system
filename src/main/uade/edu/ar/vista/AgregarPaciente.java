@@ -8,7 +8,6 @@ import main.uade.edu.ar.exceptions.PacienteYaExisteException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Random;
 
 public class AgregarPaciente extends JDialog {
     private JPanel contentPane;

@@ -8,9 +8,9 @@ import main.uade.edu.ar.enums.Roles;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.text.ParseException;
 import java.util.Random;
 
 public class AgregarUsuario extends JDialog {

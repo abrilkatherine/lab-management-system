@@ -2,15 +2,10 @@ package main.uade.edu.ar.vista;
 
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.dto.PracticaDto;
-import main.uade.edu.ar.dto.UsuarioDto;
-import main.uade.edu.ar.enums.Roles;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 public class AgregarPracticaXPeticion extends JDialog {

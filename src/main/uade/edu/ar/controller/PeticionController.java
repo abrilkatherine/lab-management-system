@@ -4,13 +4,10 @@ import main.uade.edu.ar.dao.PeticionDao;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
-import main.uade.edu.ar.enums.TipoResultado;
 import main.uade.edu.ar.mappers.PeticionMapper;
 import main.uade.edu.ar.model.*;
-import main.uade.edu.ar.vista.PracticasXPeticion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

@@ -9,9 +9,7 @@ import java.util.List;
 import javax.swing.table.TableCellRenderer;
 
 import main.uade.edu.ar.controller.PeticionController;
-import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
-import main.uade.edu.ar.dto.UsuarioDto;
 import main.uade.edu.ar.util.StyleUtils;
 
 public class PracticasXPeticion extends JDialog {
