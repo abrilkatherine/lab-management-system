@@ -4,19 +4,6 @@ Sistema de gestión para laboratorios que permite administrar pacientes, peticio
 
 ## 🚀 Inicio Rápido
 
-### Ejecutar el proyecto:
-```bash
-make run
-```
-
-### Otros comandos útiles:
-```bash
-make build        # Build completo
-make run-tests    # Ejecutar pruebas
-make clean        # Limpiar archivos
-make help         # Ver todos los comandos
-```
-
 ## 📋 Características
 
 - ✅ **Gestión de Pacientes** - CRUD completo con validaciones

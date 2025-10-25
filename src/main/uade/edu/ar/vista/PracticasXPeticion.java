@@ -36,14 +36,12 @@ public class PracticasXPeticion extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
 
-        // Panel de título
         JLabel tituloLabel = new JLabel("Prácticas");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JPanel tituloPanel = new JPanel();
         tituloPanel.add(tituloLabel);
         contentPane.add(tituloPanel, BorderLayout.NORTH);
 
-        // Modelo de la tabla
         tableModel = new DefaultTableModel(new Object[]{"🆔 Id", "📋 Nombre", "✏️ Editar", "🗑️ Eliminar"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -55,19 +53,10 @@ public class PracticasXPeticion extends JDialog {
         JScrollPane scrollPane = new JScrollPane(practicasTable);
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
-        // Renderizador de celda para el botón "Info"
         practicasTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-
-        // Editor de celda para el botón "Info"
         practicasTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JTextField()));
-
-        // Renderizador de celda para el botón "Eliminar"
         practicasTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-
-        // Editor de celda para el botón "Eliminar"
         practicasTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JTextField()));
-
-        // Botón Agregar con estilo moderno
         agregarButton = StyleUtils.createModernButton("➕ Agregar Práctica", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(agregarButton);
@@ -138,21 +127,16 @@ public class PracticasXPeticion extends JDialog {
                 int columnIndex = practicasTable.getSelectedColumn();
 
                 if (columnIndex == 2) {
-                    // Botón "Info" - Obtener la información de la práctica correspondiente al botón "Info"
-                    int practiceId = (int) practicasTable.getValueAt(rowIndex, 0); // Obtener el Id de la práctica
+                    int practiceId = (int) practicasTable.getValueAt(rowIndex, 0);
                     PracticaDto selectedPractica = obtenerPracticaPorId(practiceId);
 
-                    // Redirigir a la clase "EditarPractica" con la información de la práctica seleccionada
                     if (selectedPractica != null) {
                         EditarPractica editarPractica = new EditarPractica(peticionController, selectedPractica, PracticasXPeticion.this);
                         editarPractica.setVisible(true);
                     }
                 } else if (columnIndex == 3) {
-                    // Botón "Eliminar" - Obtener el ID de la práctica correspondiente al botón "Eliminar"
-                    int practiceId = (int) practicasTable.getValueAt(rowIndex, 0); // Obtener el Id de la práctica
-                    String nombrePractica = (String) practicasTable.getValueAt(rowIndex, 1); // Obtener el nombre de la práctica
-
-                    // Diálogo de confirmación con botones personalizados
+                    int practiceId = (int) practicasTable.getValueAt(rowIndex, 0);
+                    String nombrePractica = (String) practicasTable.getValueAt(rowIndex, 1);
                     Object[] options = {"❌ No", "✅ Sí"};
                     int confirm = JOptionPane.showOptionDialog(
                         practicasTable,
@@ -165,13 +149,11 @@ public class PracticasXPeticion extends JDialog {
                         options[0] // "No" como opción por defecto
                     );
                     
-                    // Con opciones personalizadas, 0 = "No", 1 = "Sí"
-                    if (confirm == 1) { // "✅ Sí" está en la posición 1
+                    if (confirm == 1) {
                         try {
                             peticionController.borrarPractica(practiceId);
                             actualizarDatos();
                             
-                            // Mostrar mensaje de éxito
                             JOptionPane.showMessageDialog(
                                 practicasTable,
                                 "✅ Práctica '" + nombrePractica + "' eliminada correctamente.",
@@ -190,7 +172,6 @@ public class PracticasXPeticion extends JDialog {
         }
 
         private PracticaDto obtenerPracticaPorId(int practiceId) {
-            // Obtener las prácticas actualizadas del controlador
             List<PracticaDto> practicasActualizadas = peticionController.getAllPracticasDePeticion(idPeticion);
             for (PracticaDto practica : practicasActualizadas) {
                 if (practica.getId() == practiceId) {
@@ -216,7 +197,6 @@ public class PracticasXPeticion extends JDialog {
         List<PracticaDto> practicas = peticionController.getAllPracticasDePeticion(idPeticion);
 
         for (PracticaDto practica : practicas) {
-            // Agregar la práctica a la tabla
             Object[] rowData = {practica.getId(), practica.getNombre(), "✏️", "🗑️"};
             tableModel.addRow(rowData);
         }
@@ -228,7 +208,6 @@ public class PracticasXPeticion extends JDialog {
         List<PracticaDto> practicas = peticionController.getAllPracticasDePeticion(idPeticion);
 
         for (PracticaDto practica : practicas) {
-            // Agregar la práctica a la tabla
             Object[] rowData = {practica.getId(), practica.getNombre(), "✏️", "🗑️"};
             tableModel.addRow(rowData);
         }

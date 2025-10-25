@@ -45,7 +45,6 @@ public class AgregarPaciente extends JDialog {
     }
 
     private void initializeUI() {
-        // Configurar el título del diálogo
         setTitle("Crear Nuevo Paciente");
         
         contentPane = new JPanel();
@@ -56,7 +55,6 @@ public class AgregarPaciente extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
 
 
-        // Nombre del paciente
         JLabel nombrePacienteLabel = new JLabel("Nombre del paciente:");
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -69,7 +67,6 @@ public class AgregarPaciente extends JDialog {
         gbc.weightx = 1.0;
         contentPane.add(nombreTextField, gbc);
 
-        // Apellido del paciente
         JLabel apellidoLabel = new JLabel("Apellido:");
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -82,7 +79,6 @@ public class AgregarPaciente extends JDialog {
         gbc.weightx = 1.0;
         contentPane.add(apellidoTextField, gbc);
 
-        // email
         JLabel emailLabel = new JLabel("Email:");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -125,7 +121,6 @@ public class AgregarPaciente extends JDialog {
         gbc.weightx = 0.0;
         contentPane.add(generoLabel, gbc);
 
-        // Crear un panel para los radio buttons de género con BoxLayout horizontal
         JPanel generoPanel = new JPanel();
         generoPanel.setLayout(new BoxLayout(generoPanel, BoxLayout.X_AXIS));
         generoPanel.setBackground(contentPane.getBackground());
@@ -160,7 +155,6 @@ public class AgregarPaciente extends JDialog {
         gbc.weightx = 1.0;
         contentPane.add(domicilioTextField, gbc);
 
-        // Botón Guardar
         guardarButton = new JButton("Guardar");
         gbc.gridx = 1;
         gbc.gridy = 7;
@@ -225,7 +219,6 @@ public class AgregarPaciente extends JDialog {
     }
 
     private void onGuardar() {
-        // Acciones de guardar
         String nombrePaciente = nombreTextField.getText();
         String apellidoPaciente = apellidoTextField.getText();
         String emailPaciente = emailTextField.getText();
@@ -233,7 +226,6 @@ public class AgregarPaciente extends JDialog {
         String edadPaciente = edadTextField.getText();
         String domicilioPaciente = domicilioTextField.getText();
         
-        // Validar que los campos no estén vacíos o contengan placeholders
         if (nombrePaciente.isEmpty() || nombrePaciente.equals("Ingrese el nombre del paciente")) {
             JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el nombre del paciente", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
             return;
@@ -264,7 +256,6 @@ public class AgregarPaciente extends JDialog {
             return;
         }
         
-        // Validar que se haya seleccionado un género
         if (!generoRadioButtonMasculino.isSelected() && !generoRadioButtonFemenino.isSelected()) {
             JOptionPane.showMessageDialog(this, "❌ Por favor, seleccione un género", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
             return;
@@ -292,7 +283,6 @@ public class AgregarPaciente extends JDialog {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "❌ Error: La edad y el DNI deben ser números válidos", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            // Manejo de la excepción
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "❌ Error al crear el paciente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

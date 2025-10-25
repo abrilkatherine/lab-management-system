@@ -37,7 +37,6 @@ public class EditarPaciente extends JDialog {
     }
 
     private void initializeUI() {
-        // Configurar el título del diálogo
         setTitle("Editar Paciente");
         
         contentPane = new JPanel();
@@ -103,7 +102,6 @@ public class EditarPaciente extends JDialog {
 
         ButtonGroup generoButtonGroup = new ButtonGroup();
 
-        // Crear un panel para los radio buttons de género con BoxLayout horizontal
         JPanel generoPanel = new JPanel();
         generoPanel.setLayout(new BoxLayout(generoPanel, BoxLayout.X_AXIS));
         generoPanel.setBackground(contentPane.getBackground());
@@ -232,8 +230,7 @@ public class EditarPaciente extends JDialog {
             pacientesTodas.actualizarTablaPacientes();
             dispose();
         } catch (Exception e) {
-            // Manejo de la excepción
-            e.printStackTrace(); // Imprimir información de la excepción
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
