@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
+import main.uade.edu.ar.util.StyleUtils;
 
 public class BarraNavegacion {
 
@@ -21,27 +22,57 @@ public class BarraNavegacion {
     private JPanel cardPanel;
 
     public JPanel createNavBarPanel() {
-        // Crear un panel para el menú
-        menuPanel = new JPanel();
-        menuPanel.setBackground(Color.decode("#0080F0"));
+        // Crear un panel para el menú con gradiente
+        menuPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Gradiente de fondo
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, StyleUtils.PRIMARY_BLUE,
+                    0, getHeight(), StyleUtils.PRIMARY_DARK
+                );
+                g2.setPaint(gradient);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        menuPanel.setLayout(new BorderLayout());
+        menuPanel.setPreferredSize(new Dimension(0, 100));
+
+        // Panel superior con logo/título
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.setOpaque(false);
+        
+        JLabel logoLabel = new JLabel("🏥 Sistema de Gestión de Laboratorio");
+        logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        logoLabel.setForeground(StyleUtils.WHITE);
+        topPanel.add(logoLabel);
+        
+        menuPanel.add(topPanel, BorderLayout.NORTH);
 
         // Crear un panel para los botones del menú
         buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 15));
 
-        // Usar FlowLayout con alineación izquierda para el primer botón
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JButton homeButton = createButton("Pacientes", Color.WHITE);
+        // Crear botones con estilo moderno
+        JButton homeButton = StyleUtils.createNavButton("👥 Pacientes");
+        JButton sucursalesButton = StyleUtils.createNavButton("🏢 Sucursales");
+        JButton peticionesButton = StyleUtils.createNavButton("📋 Peticiones");
+        JButton criticasButton = StyleUtils.createNavButton("⚠️ Críticas");
+        JButton usuariosButton = StyleUtils.createNavButton("👤 Usuarios");
+
+        // Configurar acciones de los botones
+        setupButtonActions(homeButton, "👥 Pacientes");
+        setupButtonActions(sucursalesButton, "🏢 Sucursales");
+        setupButtonActions(peticionesButton, "📋 Peticiones");
+        setupButtonActions(criticasButton, "⚠️ Críticas");
+        setupButtonActions(usuariosButton, "👤 Usuarios");
+
         buttonPanel.add(homeButton);
-
-        // Usar BoxLayout con alineación derecha para los otros tres botones
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-        JButton sucursalesButton = createButton("Sucursales", Color.WHITE);
-        JButton peticionesButton = createButton("Peticiones", Color.WHITE);
-        JButton criticasButton = createButton("Peticiones Criticas", Color.WHITE);
-        JButton usuariosButton = createButton("Usuarios", Color.WHITE);
-
-        buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(sucursalesButton);
         buttonPanel.add(peticionesButton);
         buttonPanel.add(criticasButton);
@@ -64,15 +95,25 @@ public class BarraNavegacion {
         }
 
 
-        // Agregar los paneles de vistas al cardPanel
-        cardPanel.add(new PacientesTodas(pacienteController).createPanel(), "pacientesTodas");
-        cardPanel.add(new SucursalTodas(sucursalYUsuarioController).createPanel(), "sucursalesTodas");
-        cardPanel.add(new PeticionesTodas(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "peticionesTodas");
-        cardPanel.add(new PeticionConResultadosCriticos(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "PeticionConResultadoCriticos");
-        cardPanel.add(new UsuariosTodos(sucursalYUsuarioController).createPanel(), "usuariosTodos");
+        // Agregar los paneles de vistas al cardPanel (solo si los controladores están disponibles)
+        if (pacienteController != null) {
+            cardPanel.add(new PacientesTodas(pacienteController).createPanel(), "pacientesTodas");
+        }
+        if (sucursalYUsuarioController != null) {
+            cardPanel.add(new SucursalTodas(sucursalYUsuarioController).createPanel(), "sucursalesTodas");
+            cardPanel.add(new UsuariosTodos(sucursalYUsuarioController).createPanel(), "usuariosTodos");
+        }
+        if (peticionController != null && sucursalYUsuarioController != null && pacienteController != null) {
+            cardPanel.add(new PeticionesTodas(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "peticionesTodas");
+            cardPanel.add(new PeticionConResultadosCriticos(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "PeticionConResultadoCriticos");
+        }
 
-        // Solo retornar el panel del menú, NO el cardPanel
-        return menuPanel;
+        // Crear un panel principal que contenga tanto el menú como el cardPanel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(menuPanel, BorderLayout.NORTH);
+        mainPanel.add(cardPanel, BorderLayout.CENTER);
+        
+        return mainPanel;
     }
 
     // Método para obtener el cardPanel
@@ -80,31 +121,23 @@ public class BarraNavegacion {
         return cardPanel;
     }
 
-    // Método de utilidad para crear botones
-    private JButton createButton(String text, Color foregroundColor) {
-        JButton button = new JButton(text);
-        button.setForeground(foregroundColor);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
+    // Método de utilidad para crear botones (actualizado para nuevos estilos)
+    private void setupButtonActions(JButton button, String text) {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (text.equals("Pacientes")) {
+                if (text.contains("Pacientes")) {
                     cardLayout.show(cardPanel, "pacientesTodas");
-                } else if (text.equals("Sucursales")) {
+                } else if (text.contains("Sucursales")) {
                     cardLayout.show(cardPanel, "sucursalesTodas");
-                } else if (text.equals("Prácticas")) {
-                    cardLayout.show(cardPanel, "practicasTodas");
-                } else if (text.equals("Peticiones")) {
+                } else if (text.contains("Peticiones") && !text.contains("Críticas")) {
                     cardLayout.show(cardPanel, "peticionesTodas");
-                }else if (text.equals("Usuarios")) {
+                } else if (text.contains("Usuarios")) {
                     cardLayout.show(cardPanel, "usuariosTodos");
-                }else if (text.equals("Peticiones Criticas")) {
+                } else if (text.contains("Críticas")) {
                     cardLayout.show(cardPanel, "PeticionConResultadoCriticos");
                 }
             }
         });
-        return button;
     }
 }

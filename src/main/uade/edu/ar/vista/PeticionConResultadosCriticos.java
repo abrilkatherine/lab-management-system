@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import main.uade.edu.ar.util.StyleUtils;
 
 public class PeticionConResultadosCriticos {
     private DefaultTableModel tableModel;
@@ -31,51 +32,75 @@ public class PeticionConResultadosCriticos {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel para contener todos los componentes
-        JPanel panel = new JPanel();
+        // Crear un JPanel principal con estilo moderno
+        JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Agregar margen superior de 10 píxeles
 
-        // Crear un JPanel para el encabezado
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setLayout(new BorderLayout());
+        // Crear un JPanel para el encabezado con estilo
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(StyleUtils.WHITE);
+        headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Crear el título "Sucursales" a la izquierda
-        JLabel titleLabel = new JLabel("Peticiones Con Resultado Critico");
-        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20));
+        // Título con estilo moderno
+        JLabel titleLabel = StyleUtils.createTitle("⚠️ Peticiones con Resultados Críticos");
         headerPanel.add(titleLabel, BorderLayout.WEST);
+
+        // Subtítulo informativo
+        JLabel subtitleLabel = StyleUtils.createSubtitle("Lista de peticiones que requieren atención inmediata");
+        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
 
         // Agregar el JPanel del encabezado al JPanel principal
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de sucursales
+        // Crear la tabla con estilo moderno
         JTable table = createTable();
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(new EmptyBorder(10, 20, 20, 20));
+        scrollPane.getViewport().setBackground(StyleUtils.WHITE);
+        
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
     }
 
     private JTable createTable() {
-        // Crear un modelo de tabla personalizado que haga que todas las celdas sean no editables
-        tableModel.addColumn("ID");
-        tableModel.addColumn("Obra Social");
-        tableModel.addColumn("Paciente");
-        tableModel.addColumn("Sucursal");
+        // Crear un modelo de tabla personalizado
+        tableModel.addColumn("🆔 ID");
+        tableModel.addColumn("🏥 Obra Social");
+        tableModel.addColumn("👤 Paciente");
+        tableModel.addColumn("🏢 Sucursal");
+        tableModel.addColumn("📅 Fecha Carga");
 
-        // Agregar filas de ejemplo a la tabla
+        // Agregar datos a la tabla
         peticionesLista = peticionController.getPeticionesConResultadosCriticos();
 
         for (PeticionDto peticion : peticionesLista) {
-            tableModel.addRow(new Object[]{peticion.getId(),peticion.getObraSocial(), peticion.getPaciente().getNombre(), peticion.getSucursal().getNumero()});
+            tableModel.addRow(new Object[]{
+                peticion.getId(),
+                peticion.getObraSocial(), 
+                peticion.getPaciente().getNombre() + " " + peticion.getPaciente().getApellido(),
+                "Sucursal " + peticion.getSucursal().getNumero(),
+                peticion.getFechaCarga().toString()
+            });
         }
 
-        // Crear la tabla y configurar el modelo
-        JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(3).setPreferredWidth(50);
-
+        // Crear la tabla con estilo moderno
+        JTable table = new JTable(tableModel) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Hacer todas las celdas no editables
+            }
+        };
+        
+        // Aplicar estilos modernos
+        StyleUtils.styleTable(table);
+        
+        // Configurar ancho de columnas
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(200);
+        table.getColumnModel().getColumn(3).setPreferredWidth(120);
+        table.getColumnModel().getColumn(4).setPreferredWidth(150);
 
         return table;
     }

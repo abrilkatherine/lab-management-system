@@ -11,6 +11,7 @@ import java.util.List;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.SucursalDto;
+import main.uade.edu.ar.util.StyleUtils;
 
 
 public class SucursalTodas {
@@ -30,45 +31,38 @@ public class SucursalTodas {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel para contener todos los componentes
-        JPanel panel = new JPanel();
+        // Crear un JPanel con estilo moderno
+        JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Agregar margen superior de 10 píxeles
 
-        // Crear un JPanel para el encabezado
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setLayout(new BorderLayout());
+        // Crear un JPanel para el encabezado con estilo
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(StyleUtils.WHITE);
+        headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Crear el título "Sucursales" a la izquierda
-        JLabel titleLabel = new JLabel("Sucursales");
-        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20));
+        // Título con estilo moderno
+        JLabel titleLabel = StyleUtils.createTitle("🏢 Sucursales");
         headerPanel.add(titleLabel, BorderLayout.WEST);
 
-        // Crear el botón "Agregar" a la derecha
-        JButton addButton = new JButton("Agregar");
-        addButton.setContentAreaFilled(false);
-        addButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        addButton.setForeground(Color.WHITE);
-        addButton.setOpaque(true);
-        addButton.setBackground(Color.decode("#0080F0"));
+        // Subtítulo informativo
+        JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de sucursales del laboratorio");
+        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
 
-        // Agregar ActionListener al botón "Agregar"
+        // Botón "Agregar" con estilo moderno
+        JButton addButton = StyleUtils.createModernButton("➕ Agregar Sucursal", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         addButton.addActionListener(e -> {
             AgregarSucursal agregarSucursal = new AgregarSucursal(sucursalYUsuarioController, this);
             agregarSucursal.setVisible(true);
         });
-
-        // Agregar el botón "Agregar" al JPanel del encabezado
         headerPanel.add(addButton, BorderLayout.EAST);
 
-        // Agregar el JPanel del encabezado al JPanel principal
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de sucursales
+        // Crear la tabla de sucursales con estilos
         JTable table = createTable();
+        StyleUtils.styleTable(table);
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
@@ -76,9 +70,9 @@ public class SucursalTodas {
 
     private JTable createTable() {
         // Crear un modelo de tabla personalizado que haga que todas las celdas sean no editables
-        tableModel.addColumn("Numero");
-        tableModel.addColumn("Editar");
-        tableModel.addColumn("Eliminar");
+        tableModel.addColumn("🏢 Número");
+        tableModel.addColumn("✏️ Editar");
+        tableModel.addColumn("🗑️ Eliminar");
 
         // Obtener la lista de sucursales mediante el controlador
         sucursalDtoList = sucursalYUsuarioController.getAllSucursales();

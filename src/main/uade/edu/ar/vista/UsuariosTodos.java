@@ -2,6 +2,7 @@ package main.uade.edu.ar.vista;
 
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.UsuarioDto;
+import main.uade.edu.ar.util.StyleUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,29 +26,25 @@ public class UsuariosTodos {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel para contener todos los componentes
-        JPanel panel = new JPanel();
+        // Crear un JPanel con estilo moderno
+        JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Agregar margen superior de 10 píxeles
 
-        // Crear un JPanel para el encabezado
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setLayout(new BorderLayout());
+        // Crear un JPanel para el encabezado con estilo
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(StyleUtils.WHITE);
+        headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Crear el título "Usuarios" a la izquierda
-        JLabel titleLabel = new JLabel("Usuarios");
-        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20));
+        // Título con estilo moderno
+        JLabel titleLabel = StyleUtils.createTitle("👤 Usuarios");
         headerPanel.add(titleLabel, BorderLayout.WEST);
 
-        // Crear el botón "Agregar" a la derecha
-        JButton addButton = new JButton("Agregar");
-        addButton.setContentAreaFilled(false);
-        addButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        addButton.setForeground(Color.WHITE);
-        addButton.setOpaque(true);
-        addButton.setBackground(Color.decode("#0080F0"));
+        // Subtítulo informativo
+        JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de usuarios del laboratorio");
+        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+
+        // Botón "Agregar" con estilo moderno
+        JButton addButton = StyleUtils.createModernButton("➕ Agregar Usuario", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
 
         // Agregar ActionListener al botón "Agregar"
         addButton.addActionListener(e -> {
@@ -55,26 +52,26 @@ public class UsuariosTodos {
             agregarUsuario.setVisible(true);
         });
 
-        // Agregar el botón "Agregar" al JPanel del encabezado
         headerPanel.add(addButton, BorderLayout.EAST);
 
-        // Agregar el JPanel del encabezado al JPanel principal
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de usuarios
+        // Crear la tabla de usuarios con estilos
         JTable table = createTable();
+        StyleUtils.styleTable(table);
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
     }
 
     private JTable createTable() {
-        // Configurar el modelo de tabla
-        tableModel.addColumn("Nombre");
-        tableModel.addColumn("Rol");
-        tableModel.addColumn("Editar");
-        tableModel.addColumn("Eliminar");
+        // Configurar el modelo de tabla con iconos
+        tableModel.addColumn("👤 Nombre");
+        tableModel.addColumn("🔑 Rol");
+        tableModel.addColumn("✏️ Editar");
+        tableModel.addColumn("🗑️ Eliminar");
 
         // Obtener la lista de usuarios
         List<UsuarioDto> usuarios = sucursalYUsuarioController.getAllUsuarios();
