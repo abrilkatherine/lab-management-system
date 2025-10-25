@@ -12,6 +12,7 @@ import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.UsuarioDto;
+import main.uade.edu.ar.util.StyleUtils;
 
 public class PracticasXPeticion extends JDialog {
     private DefaultTableModel tableModel;
@@ -66,8 +67,8 @@ public class PracticasXPeticion extends JDialog {
         // Editor de celda para el botón "Eliminar"
         practicasTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JTextField()));
 
-        // Botón Agregar
-        agregarButton = new JButton("Agregar");
+        // Botón Agregar con estilo moderno
+        agregarButton = StyleUtils.createModernButton("➕ Agregar Práctica", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(agregarButton);
         contentPane.add(buttonPanel, BorderLayout.EAST);

@@ -37,6 +37,9 @@ public class EditarPractica extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Editar Práctica");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

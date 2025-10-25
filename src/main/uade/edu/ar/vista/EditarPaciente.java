@@ -37,6 +37,9 @@ public class EditarPaciente extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Editar Paciente");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

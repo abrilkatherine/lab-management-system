@@ -40,6 +40,9 @@ public class EditarUsuario extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Editar Usuario");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

@@ -32,6 +32,9 @@ public class AgregarPracticaXPeticion extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Nueva Práctica");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

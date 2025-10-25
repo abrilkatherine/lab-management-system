@@ -66,6 +66,9 @@ public class EditarPeticion extends JDialog {
 
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Editar Petición");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 

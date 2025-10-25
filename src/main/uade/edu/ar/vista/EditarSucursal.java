@@ -38,6 +38,9 @@ public class EditarSucursal extends JDialog {
     }
 
     private void initializeUI() {
+        // Configurar el título del diálogo
+        setTitle("Editar Sucursal");
+        
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
 
