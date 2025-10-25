@@ -3,6 +3,7 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.enums.Genero;
+import main.uade.edu.ar.exceptions.PacienteYaExisteException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -286,6 +287,8 @@ public class AgregarPaciente extends JDialog {
             
             JOptionPane.showMessageDialog(this, "✅ Paciente creado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+        } catch (PacienteYaExisteException e) {
+            JOptionPane.showMessageDialog(this, "❌ " + e.getMessage(), "Paciente Duplicado", JOptionPane.ERROR_MESSAGE);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "❌ Error: La edad y el DNI deben ser números válidos", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {

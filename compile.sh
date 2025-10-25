@@ -22,6 +22,7 @@ javac -cp "lib/gson-2.10.1.jar" \
       src/main/uade/edu/ar/dao/*.java \
       src/main/uade/edu/ar/dto/*.java \
       src/main/uade/edu/ar/enums/*.java \
+      src/main/uade/edu/ar/exceptions/*.java \
       src/main/uade/edu/ar/mappers/*.java \
       src/main/uade/edu/ar/model/*.java \
       src/main/uade/edu/ar/util/*.java \

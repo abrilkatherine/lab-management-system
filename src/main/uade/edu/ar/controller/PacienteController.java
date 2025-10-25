@@ -4,6 +4,7 @@ import main.uade.edu.ar.dao.PacienteDao;
 import main.uade.edu.ar.dao.PeticionDao;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.SucursalDto;
+import main.uade.edu.ar.exceptions.PacienteYaExisteException;
 import main.uade.edu.ar.mappers.PacienteMapper;
 import main.uade.edu.ar.model.Paciente;
 import main.uade.edu.ar.model.Peticion;
@@ -54,12 +55,31 @@ public class PacienteController {
                 .orElse(null);
     }
 
-    public void crearPaciente(PacienteDto pacienteDTO) throws Exception {
-        if (getPacientePorDni(pacienteDTO.getDni()) == null) {
-            Paciente paciente = PacienteMapper.toModel(pacienteDTO);
-            pacienteDao.save(paciente);
-            pacientes.add(paciente);
+    /**
+     * Verifica si existe un paciente con los mismos DNI, apellido y nombre
+     * @param dni El DNI a verificar
+     * @param apellido El apellido a verificar
+     * @param nombre El nombre a verificar
+     * @return true si existe un paciente con los 3 campos iguales, false en caso contrario
+     */
+    private boolean existePacienteCompleto(int dni, String apellido, String nombre) {
+        return pacientes.stream()
+                .anyMatch(p -> p.getDni() == dni && 
+                             p.getApellido().equalsIgnoreCase(apellido) && 
+                             p.getNombre().equalsIgnoreCase(nombre));
+    }
+
+    public void crearPaciente(PacienteDto pacienteDTO) throws PacienteYaExisteException, Exception {
+        if (existePacienteCompleto(pacienteDTO.getDni(), pacienteDTO.getApellido(), pacienteDTO.getNombre())) {
+            throw new PacienteYaExisteException(pacienteDTO.getDni(), 
+                "Ya existe un paciente con DNI: " + pacienteDTO.getDni() + 
+                ", Apellido: " + pacienteDTO.getApellido() + 
+                " y Nombre: " + pacienteDTO.getNombre());
         }
+        
+        Paciente paciente = PacienteMapper.toModel(pacienteDTO);
+        pacienteDao.save(paciente);
+        pacientes.add(paciente);
     }
 
     public void modificarPaciente(PacienteDto pacienteDto) throws Exception {

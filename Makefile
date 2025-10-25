@@ -36,6 +36,7 @@ compile:
 		$(SRC_DIR)/dao/*.java \
 		$(SRC_DIR)/dto/*.java \
 		$(SRC_DIR)/enums/*.java \
+		$(SRC_DIR)/exceptions/*.java \
 		$(SRC_DIR)/mappers/*.java \
 		$(SRC_DIR)/model/*.java \
 		$(SRC_DIR)/util/*.java \
