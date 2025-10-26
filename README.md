@@ -13,7 +13,6 @@ Sistema de gestión para laboratorios que permite administrar pacientes, peticio
 - ✅ **Interfaz Gráfica** - Desarrollada con Swing
 - ✅ **Persistencia** - Almacenamiento en archivos JSON
 - ✅ **Reglas de Negocio** - Validaciones de integridad implementadas
-- ✅ **Formato de Fechas Mejorado** - Fechas en formato dd/MM/yyyy HH:mm
 
 ## 🛠️ Tecnologías
 
@@ -21,12 +20,6 @@ Sistema de gestión para laboratorios que permite administrar pacientes, peticio
 - **Swing** (Interfaz gráfica)
 - **Gson** (Serialización JSON)
 - **Make** (Automatización de build)
-
-## 🔄 Mejoras Recientes
-
-- **Formato de Fechas Optimizado** - Las fechas ahora se muestran en formato `dd/MM/yyyy HH:mm` en lugar del formato largo anterior
-- **Código Limpio** - Eliminación de métodos obsoletos y optimización del código
-- **Tests Actualizados** - Pruebas unitarias mejoradas con manejo de fechas más robusto
 
 ## 📁 Estructura del Proyecto
 
@@ -55,10 +48,6 @@ lab-management-system/
 | `make run-tests` | Ejecutar pruebas |
 | `make clean` | Limpiar archivos |
 | `make help` | Ver ayuda |
-
-## 📚 Documentación
-
-- [QUICK_START.md](QUICK_START.md) - Guía de inicio rápido
 
 ---
 
