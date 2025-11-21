@@ -1,7 +1,6 @@
 package main.uade.edu.ar.controller;
 
-import main.uade.edu.ar.controller.SucursalYUsuarioController;
-import main.uade.edu.ar.dao.PeticionDao;
+import main.uade.edu.ar.dao.IPeticionDao;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
@@ -14,21 +13,48 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para gestionar peticiones, prácticas y resultados.
+ * Aplica inyección de dependencias: recibe el DAO por constructor.
+ */
 public class PeticionController {
     private static PeticionController peticionController;
-    private static PeticionDao peticionDao;
-    private static List<Peticion> peticiones;
+    private final IPeticionDao peticionDao;
+    private List<Peticion> peticiones;
 
-    private PeticionController() {
+    /**
+     * Constructor privado que recibe las dependencias (Dependency Injection)
+     */
+    private PeticionController(IPeticionDao peticionDao) throws Exception {
+        if (peticionDao == null) {
+            throw new IllegalArgumentException("El DAO no puede ser null");
+        }
+        this.peticionDao = peticionDao;
+        this.peticiones = peticionDao.getAll();
     }
 
+    /**
+     * Método estático para obtener la instancia (Singleton)
+     * @deprecated Usar ControllerFactory.getPeticionController() en su lugar
+     */
+    @Deprecated
     public static synchronized PeticionController getInstance() throws Exception {
         if (peticionController == null) {
-            peticionController = new PeticionController();
-            peticionDao = new PeticionDao();
-            peticiones = peticionDao.getAll();
+            // Por compatibilidad, creamos el DAO aquí
+            main.uade.edu.ar.dao.PeticionDao dao = new main.uade.edu.ar.dao.PeticionDao();
+            peticionController = new PeticionController(dao);
         }
-
+        return peticionController;
+    }
+    
+    /**
+     * Método público para crear instancia con dependencias inyectadas
+     * Usado por ControllerFactory
+     */
+    public static PeticionController createInstance(IPeticionDao peticionDao) throws Exception {
+        if (peticionController == null) {
+            peticionController = new PeticionController(peticionDao);
+        }
         return peticionController;
     }
 

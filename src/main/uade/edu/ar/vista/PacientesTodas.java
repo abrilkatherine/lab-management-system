@@ -47,7 +47,7 @@ public class PacientesTodas {
         JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de pacientes del laboratorio");
         headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Paciente", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarPaciente agregarPaciente = new AgregarPaciente(pacienteController, this);
             agregarPaciente.setVisible(true);
         });

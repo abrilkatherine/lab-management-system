@@ -55,7 +55,7 @@ public class UsuariosTodos {
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Usuario", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
 
         // Agregar ActionListener al botón "Agregar"
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarUsuario agregarUsuario = new AgregarUsuario(sucursalYUsuarioController, this);
             agregarUsuario.setVisible(true);
         });

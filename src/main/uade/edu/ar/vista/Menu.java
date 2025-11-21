@@ -4,30 +4,49 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
+import main.uade.edu.ar.util.ControllerFactory;
 import main.uade.edu.ar.util.StyleUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Clase principal de la interfaz gráfica.
+ * Usa ControllerFactory para obtener controladores con dependencias inyectadas.
+ */
 public class Menu {
     private static BarraNavegacion barraNavegacion;
+    // Variables para futuras funcionalidades - mantenidas para extensibilidad
+    @SuppressWarnings("unused")
     private static SucursalTodas sucursalTodas;
+    @SuppressWarnings("unused")
     private static PacientesTodas pacienteTodas;
+    @SuppressWarnings("unused")
     private static UsuariosTodos usuariosTodos;
+    @SuppressWarnings("unused")
     private static PeticionesTodas peticionesTodas;
+    @SuppressWarnings("unused")
     private static PeticionConResultadosCriticos peticionConResultadoCriticos;
     private static JPanel cardPanel;
+    @SuppressWarnings("unused")
     private static CardLayout cardLayout;
+    // Controladores obtenidos pero no usados directamente en esta clase
+    // Se pasan a las vistas a través de BarraNavegacion
+    @SuppressWarnings("unused")
     private static SucursalYUsuarioController sucursalYUsuarioController;
+    @SuppressWarnings("unused")
     private static PacienteController pacienteController;
+    @SuppressWarnings("unused")
     private static PeticionController peticionController;
 
     public static void main(String[] args) {
         try {
-            sucursalYUsuarioController = SucursalYUsuarioController.getInstance(); //Obtenemos la instancia del controller
-            pacienteController = PacienteController.getInstance();
-            peticionController = PeticionController.getInstance();
+            // Usar Factory para obtener controladores con dependencias inyectadas
+            ControllerFactory factory = ControllerFactory.getInstance();
+            sucursalYUsuarioController = factory.getSucursalYUsuarioController();
+            pacienteController = factory.getPacienteController();
+            peticionController = factory.getPeticionController();
         } catch (Exception e) {
             e.printStackTrace();
         }

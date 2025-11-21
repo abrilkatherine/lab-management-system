@@ -3,7 +3,7 @@ package main.uade.edu.ar.dao;
 import main.uade.edu.ar.model.Peticion;
 import main.uade.edu.ar.util.GenericDAO;
 
-public class PeticionDao extends GenericDAO<Peticion> {
+public class PeticionDao extends GenericDAO<Peticion> implements IPeticionDao {
 
     private static final String fileName = "src/main/resources/peticiones.json";
 

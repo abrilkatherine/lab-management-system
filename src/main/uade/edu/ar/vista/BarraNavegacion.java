@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
+import main.uade.edu.ar.util.ControllerFactory;
 import main.uade.edu.ar.util.StyleUtils;
 
 public class BarraNavegacion {
@@ -87,9 +88,10 @@ public class BarraNavegacion {
         cardPanel = new JPanel(cardLayout);
 
         try{
-            sucursalYUsuarioController = SucursalYUsuarioController.getInstance();
-            peticionController = PeticionController.getInstance();
-            pacienteController = PacienteController.getInstance();
+            ControllerFactory factory = ControllerFactory.getInstance();
+            sucursalYUsuarioController = factory.getSucursalYUsuarioController();
+            peticionController = factory.getPeticionController();
+            pacienteController = factory.getPacienteController();
         } catch (Exception e){
             e.printStackTrace();
         }

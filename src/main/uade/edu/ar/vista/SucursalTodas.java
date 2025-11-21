@@ -57,7 +57,7 @@ public class SucursalTodas {
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Sucursal", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarSucursal agregarSucursal = new AgregarSucursal(sucursalYUsuarioController, this);
             agregarSucursal.setVisible(true);
         });

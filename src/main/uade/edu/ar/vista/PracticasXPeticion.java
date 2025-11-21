@@ -18,6 +18,8 @@ public class PracticasXPeticion extends JDialog {
     private JTable practicasTable;
     private JButton agregarButton;
 
+    // Campo recibido pero no usado directamente - los datos se cargan desde el controlador
+    @SuppressWarnings("unused")
     private List<PracticaDto> practicas;
     private int idPeticion;
     private PeticionController peticionController;
@@ -29,7 +31,7 @@ public class PracticasXPeticion extends JDialog {
         initializeUI();
         cargarDatos();
     }
-
+    
     private void initializeUI() {
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
@@ -60,7 +62,7 @@ public class PracticasXPeticion extends JDialog {
         buttonPanel.add(agregarButton);
         contentPane.add(buttonPanel, BorderLayout.EAST);
 
-        agregarButton.addActionListener(e ->{
+        agregarButton.addActionListener(_ -> {
             AgregarPracticaXPeticion agregarPracticaXPeticion = new AgregarPracticaXPeticion(peticionController, idPeticion, this);
             agregarPracticaXPeticion.setVisible(true);
         });

@@ -15,10 +15,11 @@ import main.uade.edu.ar.util.DateUtil;
 
 public class PeticionConResultadosCriticos {
     private DefaultTableModel tableModel;
-    private JPanel contentPane;
-    private JTable practicasTable;
     private PeticionController peticionController;
+    // Controladores mantenidos para futuras funcionalidades (ej: mostrar detalles)
+    @SuppressWarnings("unused")
     private SucursalYUsuarioController sucursalYUsuarioController;
+    @SuppressWarnings("unused")
     private PacienteController pacienteController;
     private List<PeticionDto> peticionesLista;
 

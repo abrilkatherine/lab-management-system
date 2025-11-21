@@ -1,8 +1,8 @@
 package main.uade.edu.ar.controller;
 
-import main.uade.edu.ar.dao.PeticionDao;
-import main.uade.edu.ar.dao.SucursalDao;
-import main.uade.edu.ar.dao.UsuarioDao;
+import main.uade.edu.ar.dao.IPeticionDao;
+import main.uade.edu.ar.dao.ISucursalDao;
+import main.uade.edu.ar.dao.IUsuarioDao;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.dto.UsuarioDto;
 import main.uade.edu.ar.model.Peticion;
@@ -13,28 +13,57 @@ import main.uade.edu.ar.model.Usuario;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para gestionar sucursales y usuarios.
+ * Aplica inyección de dependencias: recibe los DAOs por constructor.
+ */
 public class SucursalYUsuarioController {
 
     private static SucursalYUsuarioController sucursalController;
-    private static SucursalDao sucursalDao;
-    private static PeticionDao peticionDao;
-    private static List<Sucursal> sucursales;
-    private static UsuarioDao usuarioDao;
-    private static List<Usuario> usuarios;
+    private final ISucursalDao sucursalDao;
+    private final IPeticionDao peticionDao;
+    private final IUsuarioDao usuarioDao;
+    private List<Sucursal> sucursales;
+    private List<Usuario> usuarios;
 
-    private SucursalYUsuarioController() {
+    /**
+     * Constructor privado que recibe las dependencias (Dependency Injection)
+     */
+    private SucursalYUsuarioController(ISucursalDao sucursalDao, IUsuarioDao usuarioDao, IPeticionDao peticionDao) throws Exception {
+        if (sucursalDao == null || usuarioDao == null || peticionDao == null) {
+            throw new IllegalArgumentException("Los DAOs no pueden ser null");
+        }
+        this.sucursalDao = sucursalDao;
+        this.usuarioDao = usuarioDao;
+        this.peticionDao = peticionDao;
+        this.sucursales = sucursalDao.getAll();
+        this.usuarios = usuarioDao.getAll();
     }
 
+    /**
+     * Método estático para obtener la instancia (Singleton)
+     * @deprecated Usar ControllerFactory.getSucursalYUsuarioController() en su lugar
+     */
+    @Deprecated
     public static synchronized SucursalYUsuarioController getInstance() throws Exception {
         if (sucursalController == null) {
-            sucursalController = new SucursalYUsuarioController();
-            sucursalDao = new SucursalDao();
-            usuarioDao = new UsuarioDao();
-            peticionDao = new PeticionDao();
-            sucursales = sucursalDao.getAll();
-            usuarios = usuarioDao.getAll();
+            // Por compatibilidad, creamos los DAOs aquí
+            main.uade.edu.ar.dao.SucursalDao sucursalDao = new main.uade.edu.ar.dao.SucursalDao();
+            main.uade.edu.ar.dao.UsuarioDao usuarioDao = new main.uade.edu.ar.dao.UsuarioDao();
+            main.uade.edu.ar.dao.PeticionDao peticionDao = new main.uade.edu.ar.dao.PeticionDao();
+            sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);
         }
-
+        return sucursalController;
+    }
+    
+    /**
+     * Método público para crear instancia con dependencias inyectadas
+     * Usado por ControllerFactory
+     */
+    public static SucursalYUsuarioController createInstance(ISucursalDao sucursalDao, IUsuarioDao usuarioDao, IPeticionDao peticionDao) throws Exception {
+        if (sucursalController == null) {
+            sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);
+        }
         return sucursalController;
     }
 

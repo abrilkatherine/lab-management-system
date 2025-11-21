@@ -60,7 +60,7 @@ public class PeticionesTodas {
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Petición", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarPeticion agregarPeticion = new AgregarPeticion(peticionController, this);
             agregarPeticion.setVisible(true);
         });
@@ -136,9 +136,8 @@ public class PeticionesTodas {
                             break;
                         }
                     }
-                    // Crear y mostrar el diálogo de editar sucursal
+                    // Crear y mostrar el diálogo de prácticas
                     if (peticion != null) {
-                        // Crear y mostrar el diálogo de editar sucursal, pasando la sucursal correspondiente
                         PracticasXPeticion vistaPracticas = new PracticasXPeticion(peticion.getPracticas(), peticion.getId(), peticionController);
                         vistaPracticas.setVisible(true);
                     }

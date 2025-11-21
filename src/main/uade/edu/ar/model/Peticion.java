@@ -13,6 +13,8 @@ public class Peticion {
     private Sucursal sucursal;
     private Paciente paciente;
 
+    // Campo mantenido para futuras funcionalidades (ej: estado de procesamiento)
+    @SuppressWarnings("unused")
     private boolean estado;
 
     public Peticion(int id, String obraSocial, Date fechaCarga, Date fechaEntrega, Sucursal sucursal, Paciente paciente) {
