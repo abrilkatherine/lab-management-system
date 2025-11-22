@@ -197,20 +197,9 @@ public class SucursalYUsuarioController {
 
     public Usuario crearUsuario(UsuarioDto usuarioDTO) throws Exception {
         if (getUsuario(usuarioDTO.getId()) == null) {
-            // Encriptar la contraseña antes de guardar
-            String contraseniaPlana = usuarioDTO.getContrasenia();
-            String contraseniaEncriptada = PasswordUtil.hashPassword(contraseniaPlana);
-            
-            // Crear un nuevo DTO con la contraseña encriptada
-            UsuarioDto usuarioDTOConPasswordEncriptado = new UsuarioDto(
-                usuarioDTO.getId(),
-                usuarioDTO.getNombre(),
-                contraseniaEncriptada,
-                usuarioDTO.getNacimiento(),
-                usuarioDTO.getRol()
-            );
-            
-            Usuario usuario = toModel(usuarioDTOConPasswordEncriptado);
+            // Guardar la contraseña en texto plano en el JSON
+            // El hashing se hace solo en la interfaz durante la autenticación
+            Usuario usuario = toModel(usuarioDTO);
             usuarioDao.save(usuario);
             usuarios.add(usuario);
         }
@@ -224,10 +213,13 @@ public class SucursalYUsuarioController {
                 .orElse(null);
 
         if (usuarioExistente != null) {
-            // Si la contraseña no está hasheada (es texto plano), encriptarla
+            // Guardar la contraseña en texto plano en el JSON
+            // El hashing se hace solo en la interfaz durante la autenticación
             String contrasenia = usuarioDTO.getContrasenia();
-            if (!PasswordUtil.isHashed(contrasenia)) {
-                contrasenia = PasswordUtil.hashPassword(contrasenia);
+            
+            // Si la contraseña está vacía, mantener la contraseña original
+            if (contrasenia == null || contrasenia.trim().isEmpty()) {
+                contrasenia = usuarioExistente.getContrasenia();
             }
             
             usuarioExistente.setId(usuarioDTO.getId());
@@ -236,16 +228,7 @@ public class SucursalYUsuarioController {
             usuarioExistente.setRol(usuarioDTO.getRol());
             usuarioExistente.setNacimiento(usuarioDTO.getNacimiento());
             
-            // Crear un nuevo DTO con la contraseña encriptada para actualizar
-            UsuarioDto usuarioDTOConPasswordEncriptado = new UsuarioDto(
-                usuarioDTO.getId(),
-                usuarioDTO.getNombre(),
-                contrasenia,
-                usuarioDTO.getNacimiento(),
-                usuarioDTO.getRol()
-            );
-            
-            usuarioDao.update(toModel(usuarioDTOConPasswordEncriptado));
+            usuarioDao.update(usuarioExistente);
         }
     }
 
@@ -259,6 +242,62 @@ public class SucursalYUsuarioController {
             usuarioDao.delete(id);
             usuarios.remove(usuario);
         }
+    }
+
+    /**
+     * Autentica un usuario verificando su nombre y contraseña.
+     * La contraseña del JSON está en texto plano, se hashea solo para comparación.
+     * 
+     * @param nombreUsuario El nombre del usuario
+     * @param contraseniaPlana La contraseña en texto plano ingresada por el usuario
+     * @return UsuarioDto si la autenticación es exitosa, null en caso contrario
+     */
+    public UsuarioDto autenticarUsuario(String nombreUsuario, String contraseniaPlana) {
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty() || 
+            contraseniaPlana == null || contraseniaPlana.isEmpty()) {
+            return null;
+        }
+
+        // Buscar usuario por nombre
+        Usuario usuario = usuarios.stream()
+                .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombreUsuario.trim()))
+                .findFirst()
+                .orElse(null);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        // La contraseña en el JSON está en texto plano
+        // Hasheamos ambas para comparar (la ingresada y la del JSON)
+        String contraseniaDelJson = usuario.getContrasenia();
+        String hashContraseniaIngresada = PasswordUtil.hashPassword(contraseniaPlana);
+        String hashContraseniaDelJson = PasswordUtil.hashPassword(contraseniaDelJson);
+        
+        // Comparar los hashes
+        if (hashContraseniaIngresada != null && hashContraseniaIngresada.equals(hashContraseniaDelJson)) {
+            return toDto(usuario);
+        }
+
+        return null;
+    }
+
+    /**
+     * Busca un usuario por su nombre.
+     * 
+     * @param nombreUsuario El nombre del usuario a buscar
+     * @return UsuarioDto si se encuentra, null en caso contrario
+     */
+    public UsuarioDto getUsuarioPorNombre(String nombreUsuario) {
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+            return null;
+        }
+
+        return usuarios.stream()
+                .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombreUsuario.trim()))
+                .findFirst()
+                .map(SucursalYUsuarioController::toDto)
+                .orElse(null);
     }
 
     public static Usuario toModel(UsuarioDto usuarioDto) {

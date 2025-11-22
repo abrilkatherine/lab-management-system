@@ -42,10 +42,24 @@ public class PacientesTodas {
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Panel para título y subtítulo con BoxLayout vertical
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setOpaque(false);
+        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         JLabel titleLabel = StyleUtils.createTitle("👥 Pacientes");
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(titleLabel);
+        
+        titlePanel.add(Box.createVerticalStrut(5));
+        
         JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de pacientes del laboratorio");
-        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(subtitleLabel);
+        
+        headerPanel.add(titlePanel, BorderLayout.WEST);
+        
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Paciente", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         addButton.addActionListener(_ -> {
             AgregarPaciente agregarPaciente = new AgregarPaciente(pacienteController, this);

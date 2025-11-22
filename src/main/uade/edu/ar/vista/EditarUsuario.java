@@ -240,7 +240,7 @@ public class EditarUsuario extends JDialog {
             // Mostrar mensaje de confirmación
             String mensaje = "✅ Usuario actualizado exitosamente";
             if (contraseñaCambiada) {
-                mensaje += "\n🔒 La contraseña ha sido actualizada y encriptada";
+                mensaje += "\n🔒 La contraseña ha sido actualizada";
             }
             JOptionPane.showMessageDialog(this, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
             

@@ -23,12 +23,13 @@ public class BarraNavegacion {
     private JPanel cardPanel;
 
     public JPanel createNavBarPanel() {
-        // Crear un panel para el menú con gradiente
+        // Crear un panel para el menú con gradiente y sombra
         menuPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
                 // Gradiente de fondo
                 GradientPaint gradient = new GradientPaint(
@@ -37,11 +38,16 @@ public class BarraNavegacion {
                 );
                 g2.setPaint(gradient);
                 g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                // Sombra inferior
+                g2.setColor(new Color(0, 0, 0, 15));
+                g2.fillRect(0, getHeight() - 3, getWidth(), 3);
+                
                 g2.dispose();
             }
         };
         menuPanel.setLayout(new BorderLayout());
-        menuPanel.setPreferredSize(new Dimension(0, 100));
+        menuPanel.setPreferredSize(new Dimension(0, 110));
 
         // Panel superior con logo/título
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

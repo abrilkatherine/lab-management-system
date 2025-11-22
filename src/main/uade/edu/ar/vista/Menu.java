@@ -49,22 +49,51 @@ public class Menu {
             peticionController = factory.getPeticionController();
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                null,
+                "❌ Error al inicializar el sistema: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
         }
 
-
+        // Mostrar la ventana de login en lugar del menú directamente
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowMenu();
+                new LoginWindow().setVisible(true);
             }
         });
     }
 
-    private static void createAndShowMenu() {
+    /**
+     * Crea y muestra el menú principal.
+     * Este método puede ser llamado desde LoginWindow después de una autenticación exitosa.
+     */
+    public static void createAndShowMenu() {
+        // Verificar que hay una sesión activa
+        main.uade.edu.ar.util.SessionManager sessionManager = main.uade.edu.ar.util.SessionManager.getInstance();
+        if (!sessionManager.haySesionActiva()) {
+            // Si no hay sesión, mostrar login
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new LoginWindow().setVisible(true);
+                }
+            });
+            return;
+        }
+        
         // Aplicar Look & Feel moderno
         StyleUtils.setModernLookAndFeel();
         
         // Crear una instancia de JFrame para el menú
-        JFrame frame = new JFrame("🏥 Lab Management System");
+        String titulo = "🏥 Lab Management System";
+        if (sessionManager.getUsuarioActual() != null) {
+            titulo += " - " + sessionManager.getNombreUsuario() + 
+                      " (" + sessionManager.getRolUsuario() + ")";
+        }
+        JFrame frame = new JFrame(titulo);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setBackground(StyleUtils.WHITE);
