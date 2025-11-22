@@ -3,6 +3,7 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.enums.Genero;
+import main.uade.edu.ar.util.ValidacionUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -217,17 +218,55 @@ public class EditarPaciente extends JDialog {
         String dniPaciente = dniTextField.getText();
         String edadPaciente = edadTextField.getText();
         String domicilioPaciente = domicilioTextField.getText();
+        
+        // Validar campos requeridos
+        if (nombrePaciente == null || nombrePaciente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el nombre del paciente", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (apellidoPaciente == null || apellidoPaciente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el apellido", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (dniPaciente == null || dniPaciente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese el DNI", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (!ValidacionUtil.esDniValido(dniPaciente)) {
+            JOptionPane.showMessageDialog(this, ValidacionUtil.getMensajeErrorDni(), "DNI Inválido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (edadPaciente == null || edadPaciente.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese la edad", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (!ValidacionUtil.esEdadValida(edadPaciente)) {
+            JOptionPane.showMessageDialog(this, ValidacionUtil.getMensajeErrorEdad(), "Edad Inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         Genero generoPaciente;
         if(generoRadioButtonMasculino.isSelected()){
             generoPaciente = Genero.MASCULINO;
         } else {
             generoPaciente = Genero.FEMENINO;
         }
-        PacienteDto pacienteEditado = new PacienteDto(paciente.getId(), Integer.parseInt(edadPaciente), generoPaciente, nombrePaciente, Integer.parseInt(dniPaciente), domicilioPaciente, emailPaciente, apellidoPaciente);
+        
         try {
+            int dniValidado = ValidacionUtil.parsearDni(dniPaciente);
+            int edadValidada = ValidacionUtil.parsearEdad(edadPaciente);
+            
+            PacienteDto pacienteEditado = new PacienteDto(paciente.getId(), edadValidada, generoPaciente, nombrePaciente, dniValidado, domicilioPaciente, emailPaciente, apellidoPaciente);
             pacienteController.modificarPaciente(pacienteEditado);
             pacientesTodas.actualizarTablaPacientes();
             dispose();
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

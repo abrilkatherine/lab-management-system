@@ -107,10 +107,11 @@ public class UsuariosTodos {
                 if (column == 2 && row < table.getRowCount()) {
                     String nombreUsuario = (String) tableModel.getValueAt(row, 0);
 
-
+                    // Obtener la lista actualizada de usuarios
+                    List<UsuarioDto> usuariosActualizados = sucursalYUsuarioController.getAllUsuarios();
                     UsuarioDto usuario = null;
-                    for (UsuarioDto u : usuarios) {
-                        if (u.getNombre() == nombreUsuario) {
+                    for (UsuarioDto u : usuariosActualizados) {
+                        if (u.getNombre() != null && u.getNombre().equals(nombreUsuario)) {
                             usuario = u;
                             break;
                         }
@@ -118,9 +119,15 @@ public class UsuariosTodos {
                     // Crear y mostrar el diálogo de editar usuario
                     if (usuario != null) {
                         // Crear y mostrar el diálogo de editar usuario, pasando el usuario correspondiente
-
                         EditarUsuario editarUsuario = new EditarUsuario(usuario, sucursalYUsuarioController, usuariosTodos);
                         editarUsuario.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                            table,
+                            "❌ No se pudo encontrar el usuario seleccionado",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
 
@@ -143,9 +150,11 @@ public class UsuariosTodos {
                     
                     // Con opciones personalizadas, 0 = "No", 1 = "Sí"
                     if (confirm == 1) { // "✅ Sí" está en la posición 1
+                        // Obtener la lista actualizada de usuarios
+                        List<UsuarioDto> usuariosActualizados = sucursalYUsuarioController.getAllUsuarios();
                         UsuarioDto usuario = null;
-                        for (UsuarioDto u : usuarios) {
-                            if (u.getNombre().equals(nombreUsuario)) {
+                        for (UsuarioDto u : usuariosActualizados) {
+                            if (u.getNombre() != null && u.getNombre().equals(nombreUsuario)) {
                                 usuario = u;
                                 break;
                             }

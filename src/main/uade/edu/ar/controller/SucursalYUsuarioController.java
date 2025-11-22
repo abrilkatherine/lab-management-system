@@ -8,6 +8,7 @@ import main.uade.edu.ar.dto.UsuarioDto;
 import main.uade.edu.ar.model.Peticion;
 import main.uade.edu.ar.model.Sucursal;
 import main.uade.edu.ar.model.Usuario;
+import main.uade.edu.ar.util.PasswordUtil;
 
 
 import java.util.List;
@@ -196,7 +197,20 @@ public class SucursalYUsuarioController {
 
     public Usuario crearUsuario(UsuarioDto usuarioDTO) throws Exception {
         if (getUsuario(usuarioDTO.getId()) == null) {
-            Usuario usuario = toModel(usuarioDTO);
+            // Encriptar la contraseña antes de guardar
+            String contraseniaPlana = usuarioDTO.getContrasenia();
+            String contraseniaEncriptada = PasswordUtil.hashPassword(contraseniaPlana);
+            
+            // Crear un nuevo DTO con la contraseña encriptada
+            UsuarioDto usuarioDTOConPasswordEncriptado = new UsuarioDto(
+                usuarioDTO.getId(),
+                usuarioDTO.getNombre(),
+                contraseniaEncriptada,
+                usuarioDTO.getNacimiento(),
+                usuarioDTO.getRol()
+            );
+            
+            Usuario usuario = toModel(usuarioDTOConPasswordEncriptado);
             usuarioDao.save(usuario);
             usuarios.add(usuario);
         }
@@ -210,12 +224,28 @@ public class SucursalYUsuarioController {
                 .orElse(null);
 
         if (usuarioExistente != null) {
+            // Si la contraseña no está hasheada (es texto plano), encriptarla
+            String contrasenia = usuarioDTO.getContrasenia();
+            if (!PasswordUtil.isHashed(contrasenia)) {
+                contrasenia = PasswordUtil.hashPassword(contrasenia);
+            }
+            
             usuarioExistente.setId(usuarioDTO.getId());
             usuarioExistente.setNombre(usuarioDTO.getNombre());
-            usuarioExistente.setContrasenia(usuarioDTO.getContrasenia());
-            usuarioExistente.setRol(usuarioExistente.getRol());
+            usuarioExistente.setContrasenia(contrasenia);
+            usuarioExistente.setRol(usuarioDTO.getRol());
             usuarioExistente.setNacimiento(usuarioDTO.getNacimiento());
-            usuarioDao.update(toModel(usuarioDTO));
+            
+            // Crear un nuevo DTO con la contraseña encriptada para actualizar
+            UsuarioDto usuarioDTOConPasswordEncriptado = new UsuarioDto(
+                usuarioDTO.getId(),
+                usuarioDTO.getNombre(),
+                contrasenia,
+                usuarioDTO.getNacimiento(),
+                usuarioDTO.getRol()
+            );
+            
+            usuarioDao.update(toModel(usuarioDTOConPasswordEncriptado));
         }
     }
 

@@ -19,7 +19,7 @@ public class AgregarUsuario extends JDialog {
 
     private JTextField nombreTextField;
 
-    private JTextField contraseniaTextField;
+    private JPasswordField contraseniaTextField;
 
     private JTextField fechanacimientoTextField;
 
@@ -63,14 +63,37 @@ public class AgregarUsuario extends JDialog {
         gbc.weightx = 1.0;
         contentPane.add(nombreTextField, gbc);
 
-        // Apellido del usuario
+        // Contraseña del usuario
         JLabel contraseniaLabel = new JLabel("Contraseña:");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0.0;
         contentPane.add(contraseniaLabel, gbc);
 
-        contraseniaTextField = createPlaceholderTextField("Ingrese la contraseña");
+        contraseniaTextField = new JPasswordField();
+        contraseniaTextField.setBorder(BorderFactory.createCompoundBorder(contraseniaTextField.getBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        contraseniaTextField.setEchoChar((char) 0); // Mostrar texto temporalmente para placeholder
+        contraseniaTextField.setForeground(Color.GRAY);
+        contraseniaTextField.setText("Ingrese la contraseña");
+        contraseniaTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (String.valueOf(contraseniaTextField.getPassword()).equals("Ingrese la contraseña")) {
+                    contraseniaTextField.setText("");
+                    contraseniaTextField.setEchoChar('•'); // Ocultar caracteres
+                    contraseniaTextField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (contraseniaTextField.getPassword().length == 0) {
+                    contraseniaTextField.setEchoChar((char) 0);
+                    contraseniaTextField.setText("Ingrese la contraseña");
+                    contraseniaTextField.setForeground(Color.GRAY);
+                }
+            }
+        });
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
@@ -168,7 +191,8 @@ public class AgregarUsuario extends JDialog {
     private void onGuardar() {
         // Acciones de guardar
         String nombreUsuario = nombreTextField.getText();
-        String contraseniaUsuario = contraseniaTextField.getText();
+        char[] contraseniaChars = contraseniaTextField.getPassword();
+        String contraseniaUsuario = new String(contraseniaChars);
         String fechanacimientoUsuario = fechanacimientoTextField.getText();
         Roles rolUsuario = (Roles) rolComboBox.getSelectedItem();
 
@@ -180,6 +204,13 @@ public class AgregarUsuario extends JDialog {
             e.printStackTrace();
         }
 
+        // Validar que la contraseña no sea el placeholder
+        if (contraseniaUsuario == null || contraseniaUsuario.trim().isEmpty() || 
+            contraseniaUsuario.equals("Ingrese la contraseña")) {
+            JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese una contraseña", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         Random random = new Random();
         int randomId = random.nextInt(1, 900);
         UsuarioDto nuevoUsuario = new UsuarioDto(randomId, nombreUsuario, contraseniaUsuario, fechaNacimiento, rolUsuario);

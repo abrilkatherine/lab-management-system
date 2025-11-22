@@ -1,2 +1,2 @@
-{"id":2,"nombre":"Recepcionista","contrasenia":"recepcion123","nacimiento":"1992-05-15T00:00:00.000Z","rol":"RECEPCION"}
-{"id":3,"nombre":"Laboratorista","contrasenia":"lab123","nacimiento":"1988-03-20T00:00:00.000Z","rol":"LABORTISTA"}
+{"id":2,"nombre":"Recepcionista","contrasenia":"5459ad42d45ddeb950c7dab6dde07b310f5dfca990fc891d536afff81e7daab0","nacimiento":"May 14, 1992, 9:00:00 PM","rol":"RECEPCION"}
+{"id":3,"nombre":"Ingrese el nombre del usuario","contrasenia":"2d51834f9d0d5dcfed2855e6cabe86ad75cd5cbd25ba9e3eb5489521b22c4d40","nacimiento":"Mar 19, 1988, 9:00:00 PM","rol":"LABORTISTA"}

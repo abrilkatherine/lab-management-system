@@ -19,7 +19,7 @@ public class EditarUsuario extends JDialog {
 
     private JTextField nombreTextField;
 
-    private JTextField contraseniaTextField;
+    private JPasswordField contraseniaTextField;
 
     private JTextField fechanacimientoTextField;
 
@@ -63,18 +63,32 @@ public class EditarUsuario extends JDialog {
         gbc.weightx = 1.0;
         contentPane.add(nombreTextField, gbc);
 
-        // Apellido del usuario
+        // Contraseña del usuario
         JLabel contraseniaLabel = new JLabel("Contraseña:");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0.0;
         contentPane.add(contraseniaLabel, gbc);
 
-        contraseniaTextField = createPlaceholderTextField("Ingrese la contraseña");
+        JPanel contraseniaPanel = new JPanel(new BorderLayout());
+        contraseniaPanel.setBackground(contentPane.getBackground());
+        
+        contraseniaTextField = new JPasswordField();
+        contraseniaTextField.setBorder(BorderFactory.createCompoundBorder(contraseniaTextField.getBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        contraseniaTextField.setEchoChar('•'); // Siempre ocultar caracteres
+        contraseniaTextField.setForeground(Color.BLACK);
+        contraseniaPanel.add(contraseniaTextField, BorderLayout.CENTER);
+        
+        // Label que indica que hay una contraseña guardada
+        JLabel contraseniaInfoLabel = new JLabel("(Dejar vacío para mantener la actual)");
+        contraseniaInfoLabel.setForeground(Color.GRAY);
+        contraseniaInfoLabel.setFont(contraseniaInfoLabel.getFont().deriveFont(Font.ITALIC, 10f));
+        contraseniaPanel.add(contraseniaInfoLabel, BorderLayout.SOUTH);
+        
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
-        contentPane.add(contraseniaTextField, gbc);
+        contentPane.add(contraseniaPanel, gbc);
 
         // email
         JLabel fechanacimientoLabel = new JLabel("Fecha de nacimiento:");
@@ -180,7 +194,9 @@ public class EditarUsuario extends JDialog {
 
     private void cargarDatos() {
         nombreTextField.setText(usuario.getNombre());
-        contraseniaTextField.setText(usuario.getContrasenia());
+        // No mostrar la contraseña, dejar el campo vacío
+        // El usuario deberá ingresar una nueva contraseña si desea cambiarla
+        contraseniaTextField.setText("");
         fechanacimientoTextField.setText(String.valueOf(usuario.getNacimiento().toString()));
         rolComboBox.setSelectedItem(usuario.getRol());
     }
@@ -189,7 +205,8 @@ public class EditarUsuario extends JDialog {
     private void onGuardar() {
         // Acciones de guardar
         String nombreUsuario = nombreTextField.getText();
-        String contraseniaUsuario = contraseniaTextField.getText();
+        char[] contraseniaChars = contraseniaTextField.getPassword();
+        String contraseniaUsuario = new String(contraseniaChars);
         String fechanacimientoUsuario = fechanacimientoTextField.getText();
         Roles rolUsuario = (Roles) rolComboBox.getSelectedItem();
 
@@ -204,10 +221,29 @@ public class EditarUsuario extends JDialog {
             }
         }
 
-        UsuarioDto nuevoUsuario = new UsuarioDto(usuario.getId(), nombreUsuario, contraseniaUsuario, fechaNacimiento, rolUsuario);
+        // Si el campo de contraseña está vacío, mantener la contraseña original
+        boolean contraseñaCambiada = false;
+        String contraseniaFinal = contraseniaUsuario;
+        if (contraseniaUsuario == null || contraseniaUsuario.trim().isEmpty()) {
+            // Mantener la contraseña original (puede estar encriptada o en texto plano)
+            contraseniaFinal = usuario.getContrasenia();
+        } else {
+            // Se ingresó una nueva contraseña
+            contraseñaCambiada = true;
+        }
+
+        UsuarioDto nuevoUsuario = new UsuarioDto(usuario.getId(), nombreUsuario, contraseniaFinal, fechaNacimiento, rolUsuario);
         try {
             sucursalYUsuarioController.modificarUsuario(nuevoUsuario);
             usuariosTodos.actualizarTablaUsuarios();
+            
+            // Mostrar mensaje de confirmación
+            String mensaje = "✅ Usuario actualizado exitosamente";
+            if (contraseñaCambiada) {
+                mensaje += "\n🔒 La contraseña ha sido actualizada y encriptada";
+            }
+            JOptionPane.showMessageDialog(this, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            
             dispose();
         } catch (Exception e) {
             // Manejo de la excepción

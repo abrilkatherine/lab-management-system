@@ -4,6 +4,7 @@ import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.enums.Genero;
 import main.uade.edu.ar.exceptions.PacienteYaExisteException;
+import main.uade.edu.ar.util.ValidacionUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -246,8 +247,18 @@ public class AgregarPaciente extends JDialog {
             return;
         }
         
+        if (!ValidacionUtil.esDniValido(dniPaciente)) {
+            JOptionPane.showMessageDialog(this, ValidacionUtil.getMensajeErrorDni(), "DNI Inválido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         if (edadPaciente.isEmpty() || edadPaciente.equals("Ingrese la edad")) {
             JOptionPane.showMessageDialog(this, "❌ Por favor, ingrese la edad", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (!ValidacionUtil.esEdadValida(edadPaciente)) {
+            JOptionPane.showMessageDialog(this, ValidacionUtil.getMensajeErrorEdad(), "Edad Inválida", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -271,17 +282,20 @@ public class AgregarPaciente extends JDialog {
         try {
             Random random = new Random();
             int randomId = random.nextInt(1, 900);
-            PacienteDto nuevoPaciente = new PacienteDto(randomId, Integer.parseInt(edadPaciente), generoPaciente, nombrePaciente, Integer.parseInt(dniPaciente), domicilioPaciente, emailPaciente, apellidoPaciente);
+            int dniValidado = ValidacionUtil.parsearDni(dniPaciente);
+            int edadValidada = ValidacionUtil.parsearEdad(edadPaciente);
+            
+            PacienteDto nuevoPaciente = new PacienteDto(randomId, edadValidada, generoPaciente, nombrePaciente, dniValidado, domicilioPaciente, emailPaciente, apellidoPaciente);
             
             pacienteController.crearPaciente(nuevoPaciente);
             pacientesTodas.actualizarTablaPacientes();
             
             JOptionPane.showMessageDialog(this, "✅ Paciente creado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
         } catch (PacienteYaExisteException e) {
             JOptionPane.showMessageDialog(this, "❌ " + e.getMessage(), "Paciente Duplicado", JOptionPane.ERROR_MESSAGE);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "❌ Error: La edad y el DNI deben ser números válidos", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "❌ Error al crear el paciente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
