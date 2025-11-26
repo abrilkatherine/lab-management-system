@@ -27,9 +27,9 @@ make help
 
 ## 🛠️ Tecnologías
 
-- **Java 8+**
+- **Java 21 LTS** (nivel de lenguaje, requiere JDK 21+)
 - **Swing** (Interfaz gráfica)
-- **Gson** (Serialización JSON)
+- **Gson 2.11.0** (Serialización JSON)
 - **Make** (Automatización de build)
 
 ## 📁 Estructura del Proyecto

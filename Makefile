@@ -5,7 +5,7 @@
 JAVA = java
 JAVAC = javac
 JAR = jar
-CP = lib/gson-2.10.1.jar
+CP = lib/gson-2.11.0.jar
 SRC_DIR = src/main/uade/edu/ar
 OUT_DIR = out/classes
 LIB_DIR = lib
@@ -28,9 +28,9 @@ all: build
 
 # Compilar el proyecto
 compile:
-	@echo "$(GREEN)🔨 Compilando Sistema de Gestión de Laboratorio...$(NC)"
+	@echo "$(GREEN)🔨 Compilando Sistema de Gestión de Laboratorio (Java 21)...$(NC)"
 	@mkdir -p $(OUT_DIR)
-	@$(JAVAC) -cp "$(CP)" -d $(OUT_DIR) \
+	@$(JAVAC) --release 21 -cp "$(CP)" -d $(OUT_DIR) \
 		$(SRC_DIR)/*.java \
 		$(SRC_DIR)/controller/*.java \
 		$(SRC_DIR)/dao/*.java \

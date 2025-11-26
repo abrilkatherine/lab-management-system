@@ -68,7 +68,7 @@ public class UsuariosTodos {
         addButton.setPreferredSize(new Dimension(230, 40));
 
         // Agregar ActionListener al botón "Agregar"
-        addButton.addActionListener(_ -> {
+        addButton.addActionListener(e -> {
             AgregarUsuario agregarUsuario = new AgregarUsuario(sucursalYUsuarioController, this);
             agregarUsuario.setVisible(true);
         });

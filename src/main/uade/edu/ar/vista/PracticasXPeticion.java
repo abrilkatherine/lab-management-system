@@ -63,7 +63,7 @@ public class PracticasXPeticion extends JDialog {
         buttonPanel.add(agregarButton);
         contentPane.add(buttonPanel, BorderLayout.EAST);
 
-        agregarButton.addActionListener(_ -> {
+        agregarButton.addActionListener(e -> {
             AgregarPracticaXPeticion agregarPracticaXPeticion = new AgregarPracticaXPeticion(peticionController, idPeticion, this);
             agregarPracticaXPeticion.setVisible(true);
         });
