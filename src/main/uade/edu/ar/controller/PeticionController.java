@@ -6,6 +6,7 @@ import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
 import main.uade.edu.ar.mappers.PacienteMapper;
 import main.uade.edu.ar.mappers.PeticionMapper;
+import main.uade.edu.ar.mappers.SucursalMapper;
 import main.uade.edu.ar.model.*;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class PeticionController {
             peticion.setFechaCarga(peticionDTO.getFechaCarga());
             peticion.setFechaEntrega(peticionDTO.getFechaEntrega());
             peticion.setId(peticionDTO.getId());
-            peticion.setSucursal(SucursalYUsuarioController.toModel(peticionDTO.getSucursal()));
+            peticion.setSucursal(SucursalMapper.toModel(peticionDTO.getSucursal()));
             peticion.setPaciente(PacienteMapper.toModel(peticionDTO.getPaciente()));
             peticion.setPracticas(peticionDTO.getPracticas().stream()
                     .map(PeticionMapper::toModel)

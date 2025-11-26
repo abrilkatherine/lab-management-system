@@ -1,6 +1,5 @@
 package main.uade.edu.ar.mappers;
 
-import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.PracticaDto;
 import main.uade.edu.ar.dto.ResultadoDto;
@@ -23,7 +22,7 @@ public class PeticionMapper {
                 peticionDto.getObraSocial(),
                 peticionDto.getFechaCarga(),
                 peticionDto.getFechaEntrega(),
-                SucursalYUsuarioController.toModel(peticionDto.getSucursal()),
+                SucursalMapper.toModel(peticionDto.getSucursal()),
                 PacienteMapper.toModel(peticionDto.getPaciente()),
                 toModel(peticionDto.getPracticas())
         );
@@ -35,7 +34,7 @@ public class PeticionMapper {
                 peticion.getObraSocial(),
                 peticion.getFechaCarga(),
                 peticion.getFechaEntrega(),
-                SucursalYUsuarioController.toDto(peticion.getSucursal()),
+                SucursalMapper.toDto(peticion.getSucursal()),
                 PacienteMapper.toDto(peticion.getPaciente()),
                 toDto(peticion.getPracticas())
         );

@@ -5,6 +5,8 @@ import main.uade.edu.ar.dao.ISucursalDao;
 import main.uade.edu.ar.dao.IUsuarioDao;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.dto.UsuarioDto;
+import main.uade.edu.ar.mappers.SucursalMapper;
+import main.uade.edu.ar.mappers.UsuarioMapper;
 import main.uade.edu.ar.model.Peticion;
 import main.uade.edu.ar.model.Sucursal;
 import main.uade.edu.ar.model.Usuario;
@@ -52,21 +54,21 @@ public class SucursalYUsuarioController {
      */
     public List<SucursalDto> getAllSucursales() {
         return sucursales.stream()
-                .map(SucursalYUsuarioController::toDto)
+                .map(SucursalMapper::toDto)
                 .collect(Collectors.toList());
     }
     public SucursalDto getSucursalPorId(int id) {
         return sucursales.stream()
                 .filter(s -> s.getId() == id)
                 .findFirst()
-                .map(SucursalYUsuarioController::toDto)
+                .map(SucursalMapper::toDto)
                 .orElse(null);
     }
 
     public void crearSucursal(SucursalDto sucursalDTO) throws Exception {
         if (getSucursalPorId(sucursalDTO.getId()) == null) {
-            Sucursal sucursal = toModel(sucursalDTO);
-            sucursalDao.save(toModel(sucursalDTO));
+            Sucursal sucursal = SucursalMapper.toModel(sucursalDTO);
+            sucursalDao.save(SucursalMapper.toModel(sucursalDTO));
             sucursales.add(sucursal);
         }
     }
@@ -90,7 +92,7 @@ public class SucursalYUsuarioController {
             sucursalExistente.setDireccion(sucursalDTO.getDireccion());
             sucursalExistente.setId(sucursalDTO.getId());
             sucursalExistente.setNumero(sucursalDTO.getNumero());
-            sucursalExistente.setResponsableTecnico(toModel(sucursalDTO.getResponsableTecnico()));
+            sucursalExistente.setResponsableTecnico(UsuarioMapper.toModel(sucursalDTO.getResponsableTecnico()));
             sucursalDao.update(sucursalExistente);
         }
     }
@@ -150,41 +152,23 @@ public class SucursalYUsuarioController {
         return true;
     }
 
-    public static Sucursal toModel(SucursalDto sucursalDto) {
-        return new Sucursal(
-                sucursalDto.getId(),
-                sucursalDto.getNumero(),
-                sucursalDto.getDireccion(),
-                SucursalYUsuarioController.toModel(sucursalDto.getResponsableTecnico())
-        );
-    }
-
-    public static SucursalDto toDto(Sucursal sucursal) {
-        return new SucursalDto(
-                sucursal.getId(),
-                sucursal.getNumero(),
-                sucursal.getDireccion(),
-                SucursalYUsuarioController.toDto(sucursal.getResponsableTecnico())
-        );
-    }
-
     public UsuarioDto getUsuario(int id) {
         return usuarios.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
-                .map(SucursalYUsuarioController::toDto)
+                .map(UsuarioMapper::toDto)
                 .orElse(null);
     }
 
     public List<UsuarioDto> getAllUsuarios() {
         return usuarios.stream()
-                .map(SucursalYUsuarioController::toDto)
+                .map(UsuarioMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public Usuario crearUsuario(UsuarioDto usuarioDTO) throws Exception {
         if (getUsuario(usuarioDTO.getId()) == null) {
-            Usuario usuario = toModel(usuarioDTO);
+            Usuario usuario = UsuarioMapper.toModel(usuarioDTO);
             usuarioDao.save(usuario);
             usuarios.add(usuario);
         }
@@ -253,7 +237,7 @@ public class SucursalYUsuarioController {
         String hashContraseniaDelJson = PasswordUtil.hashPassword(contraseniaDelJson);
         
         if (hashContraseniaIngresada != null && hashContraseniaIngresada.equals(hashContraseniaDelJson)) {
-            return toDto(usuario);
+            return UsuarioMapper.toDto(usuario);
         }
 
         return null;
@@ -267,27 +251,7 @@ public class SucursalYUsuarioController {
         return usuarios.stream()
                 .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombreUsuario.trim()))
                 .findFirst()
-                .map(SucursalYUsuarioController::toDto)
+                .map(UsuarioMapper::toDto)
                 .orElse(null);
-    }
-
-    public static Usuario toModel(UsuarioDto usuarioDto) {
-        return new Usuario(
-                usuarioDto.getId(),
-                usuarioDto.getNombre(),
-                usuarioDto.getContrasenia(),
-                usuarioDto.getNacimiento(),
-                usuarioDto.getRol()
-        );
-    }
-
-    public static UsuarioDto toDto(Usuario usuario) {
-        return new UsuarioDto(
-                usuario.getId(),
-                usuario.getNombre(),
-                usuario.getContrasenia(),
-                usuario.getNacimiento(),
-                usuario.getRol()
-        );
     }
 }
