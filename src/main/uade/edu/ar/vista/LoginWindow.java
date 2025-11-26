@@ -226,8 +226,39 @@ public class LoginWindow extends JFrame {
         passwordPanel.add(togglePasswordButton, BorderLayout.EAST);
         
         fgbc.gridy = 3;
-        fgbc.insets = new Insets(0, 0, 30, 0);
+        fgbc.insets = new Insets(0, 0, 10, 0);
         fieldsPanel.add(passwordPanel, fgbc);
+        
+        // Link "¿Olvidaste tu contraseña?"
+        JButton olvidoPasswordLink = new JButton("¿Olvidaste tu contraseña?");
+        olvidoPasswordLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        olvidoPasswordLink.setForeground(StyleUtils.PRIMARY_BLUE);
+        olvidoPasswordLink.setBorderPainted(false);
+        olvidoPasswordLink.setContentAreaFilled(false);
+        olvidoPasswordLink.setFocusPainted(false);
+        olvidoPasswordLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        olvidoPasswordLink.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        olvidoPasswordLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                olvidoPasswordLink.setForeground(StyleUtils.PRIMARY_BLUE.darker());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                olvidoPasswordLink.setForeground(StyleUtils.PRIMARY_BLUE);
+            }
+        });
+        
+        olvidoPasswordLink.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mostrarRecuperacionPassword();
+            }
+        });
+        
+        fgbc.gridy = 4;
+        fgbc.insets = new Insets(0, 0, 20, 0);
+        fgbc.anchor = GridBagConstraints.EAST;
+        fieldsPanel.add(olvidoPasswordLink, fgbc);
         
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -457,6 +488,177 @@ public class LoginWindow extends JFrame {
             loginButton.setEnabled(true);
             cancelButton.setEnabled(true);
         }
+    }
+    
+    /**
+     * Muestra un diálogo para recuperar la contraseña
+     */
+    private void mostrarRecuperacionPassword() {
+        String nombreUsuario = JOptionPane.showInputDialog(
+            this,
+            "Ingrese su nombre de usuario:",
+            "Recuperar Contraseña",
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+            return; // Usuario canceló o no ingresó nada
+        }
+        
+        try {
+            UsuarioDto usuario = usuarioController.getUsuarioPorNombre(nombreUsuario.trim());
+            
+            if (usuario != null) {
+                // Mostrar contraseña en diálogo personalizado con ojito
+                mostrarDialogoConPassword(usuario.getNombre(), usuario.getContrasenia());
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "❌ No se encontró un usuario con ese nombre.",
+                    "Usuario no encontrado",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "❌ Error al recuperar la contraseña: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Muestra un diálogo personalizado con la contraseña y botón para mostrar/ocultar
+     */
+    private void mostrarDialogoConPassword(String nombreUsuario, String password) {
+        JDialog dialog = new JDialog(this, "🔑 Recuperación de Contraseña", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setResizable(false);
+        
+        // Panel principal con GridBagLayout para mejor control
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(StyleUtils.WHITE);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        
+        // Mensaje de información
+        JLabel infoLabel = new JLabel("<html><div style='text-align: center;'>" +
+            "Contraseña recuperada para:<br><b style='font-size: 15px;'>" + nombreUsuario + "</b></div></html>");
+        infoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        infoLabel.setForeground(StyleUtils.DARK_TEXT);
+        infoLabel.setHorizontalAlignment(JLabel.CENTER);
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 25, 0);
+        mainPanel.add(infoLabel, gbc);
+        
+        // Panel contenedor para el campo de contraseña con ancho fijo
+        JPanel passwordContainerPanel = new JPanel(new BorderLayout(0, 0));
+        passwordContainerPanel.setBackground(StyleUtils.WHITE);
+        passwordContainerPanel.setPreferredSize(new Dimension(380, 45));
+        
+        // Crear campos de contraseña (oculto y visible)
+        JPasswordField passwordFieldHidden = StyleUtils.createModernPasswordField(20);
+        passwordFieldHidden.setText(password);
+        passwordFieldHidden.setEditable(false);
+        passwordFieldHidden.setFocusable(false);
+        passwordFieldHidden.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        
+        JTextField passwordFieldVisible = StyleUtils.createModernTextField(20);
+        passwordFieldVisible.setText(password);
+        passwordFieldVisible.setEditable(false);
+        passwordFieldVisible.setFocusable(false);
+        passwordFieldVisible.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        passwordFieldVisible.setVisible(false);
+        
+        // Panel con CardLayout para alternar campos
+        JPanel cardPanel = new JPanel(new CardLayout());
+        cardPanel.setOpaque(false);
+        cardPanel.add(passwordFieldHidden, "hidden");
+        cardPanel.add(passwordFieldVisible, "visible");
+        
+        // Botón ojito mejorado
+        JButton toggleButton = new JButton("👁️") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                if (getModel().isRollover()) {
+                    g2.setColor(StyleUtils.LIGHT_GRAY);
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
+                }
+                
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        toggleButton.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        toggleButton.setForeground(StyleUtils.MEDIUM_GRAY);
+        toggleButton.setBorderPainted(false);
+        toggleButton.setContentAreaFilled(false);
+        toggleButton.setFocusPainted(false);
+        toggleButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        toggleButton.setPreferredSize(new Dimension(50, 45));
+        toggleButton.setToolTipText("Mostrar/Ocultar contraseña");
+        toggleButton.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        
+        final boolean[] isVisible = {false};
+        toggleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isVisible[0] = !isVisible[0];
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                if (isVisible[0]) {
+                    cl.show(cardPanel, "visible");
+                    toggleButton.setText("🙈");
+                } else {
+                    cl.show(cardPanel, "hidden");
+                    toggleButton.setText("👁️");
+                }
+            }
+        });
+        
+        passwordContainerPanel.add(cardPanel, BorderLayout.CENTER);
+        passwordContainerPanel.add(toggleButton, BorderLayout.EAST);
+        
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        mainPanel.add(passwordContainerPanel, gbc);
+        
+        // Mensaje de advertencia
+        JLabel warningLabel = new JLabel("<html><div style='text-align: center; color: #666;'>" +
+            "⚠️ Por favor, anote esta información<br>de forma segura.</div></html>");
+        warningLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        warningLabel.setHorizontalAlignment(JLabel.CENTER);
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 25, 0);
+        mainPanel.add(warningLabel, gbc);
+        
+        // Botón OK
+        JButton okButton = StyleUtils.createActionButton("✓ Entendido", "add");
+        okButton.setPreferredSize(new Dimension(160, 42));
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        gbc.gridy = 3;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(okButton, gbc);
+        
+        dialog.add(mainPanel, BorderLayout.CENTER);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
     
     /**
