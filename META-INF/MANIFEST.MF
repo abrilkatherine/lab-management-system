@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: main.uade.edu.ar.vista.Menu
-Class-Path: lib/gson-2.10.1.jar
-
-# Sistema de Gestión de Laboratorio
-# Autor: Sistema de Gestión de Laboratorio
-# Descripción: Aplicación Java para gestión de laboratorio
