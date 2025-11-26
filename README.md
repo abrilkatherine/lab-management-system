@@ -18,11 +18,6 @@ java -version
 javac -version
 ```
 
-Deberías ver algo como:
-```
-openjdk version "21" o "22"
-```
-
 #### Descargar JDK:
 - **Oracle JDK:** https://www.oracle.com/java/technologies/downloads/
 - **OpenJDK:** https://adoptium.net/ (recomendado)
@@ -55,17 +50,8 @@ ls lib/
 make build
 ```
 
-Si ves ✅ **Build completado exitosamente**, ¡todo está listo!
-
 ### 4️⃣ Ejecutar la aplicación
 ```bash
-make run
-```
-
-## 🚀 Inicio Rápido
-
-```bash
-# Compilar y ejecutar el proyecto
 make run
 
 # Ejecutar tests
@@ -153,43 +139,4 @@ El proyecto sigue una **arquitectura en capas** con separación clara de respons
 - ✅ **Dependency Injection** - Inyección de dependencias por constructor
 - ✅ **Template Method** - GenericDAO para operaciones CRUD
 
-## 🐛 Solución de Problemas
-
-### ❌ Error: "Unable to locate a Java Runtime"
-**Solución:** Instala JDK 21 o superior desde [Adoptium](https://adoptium.net/)
-
-### ❌ Error: "command not found: make"
-**Solución (Windows):** Instala Make o usa los comandos directamente:
-```bash
-# En lugar de make build:
-javac --release 21 -cp "lib/gson-2.11.0.jar" -d out/classes src/main/uade/edu/ar/**/*.java
-
-# En lugar de make run:
-java -cp "out/classes:lib/gson-2.11.0.jar" main.uade.edu.ar.vista.Menu
-```
-
-### ❌ Error: compilación falla con errores de sintaxis
-**Solución:** Verifica que estás usando JDK 21 o superior con `java -version`
-
-### ❌ Las ventanas no se ven correctamente
-**Solución:** Asegúrate de tener un entorno gráfico (X11/macOS/Windows GUI)
-
-## 👥 Equipo
-
-**Proyecto universitario para la materia Paradigma de Objetos - UADE**
-
-## 📝 Notas para Colaboradores
-
-### Estructura de branches
-- `main` - Código estable y funcional
-- `develop` - Desarrollo activo
-
-### Antes de hacer commit
-```bash
-make build     # Verificar que compila
-make run-tests # Ejecutar tests
-```
-
----
-
-**🎓 Universidad Argentina de la Empresa (UADE) - 2024**
+**🎓 Proyecto universitario para la materia Paradigma de Objetos - Universidad Argentina de la Empresa (UADE) - 2025**
