@@ -191,9 +191,18 @@ public class LoginWindow extends JFrame {
         fgbc.insets = new Insets(0, 0, 8, 0);
         fieldsPanel.add(usuarioLabel, fgbc);
         
+        JPanel usuarioPanel = new JPanel(new BorderLayout(0, 0));
+        usuarioPanel.setOpaque(false);
+        usuarioPanel.add(usuarioField, BorderLayout.CENTER);
+        
+        JPanel spacer = new JPanel();
+        spacer.setOpaque(false);
+        spacer.setPreferredSize(new Dimension(45, 42));
+        usuarioPanel.add(spacer, BorderLayout.EAST);
+        
         fgbc.gridy = 1;
         fgbc.insets = new Insets(0, 0, 20, 0);
-        fieldsPanel.add(usuarioField, fgbc);
+        fieldsPanel.add(usuarioPanel, fgbc);
         
         // Label y campo de contraseña
         JLabel contraseniaLabel = new JLabel("🔑 Contraseña");
