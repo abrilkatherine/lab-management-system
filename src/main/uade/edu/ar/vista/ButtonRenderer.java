@@ -38,7 +38,7 @@ public class ButtonRenderer extends DefaultTableCellRenderer {
         };
         
         label.setForeground(actionColor);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Fuente más grande
+        label.setFont(new Font("Segoe UI", Font.BOLD, 20)); // Fuente más grande
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setVerticalAlignment(JLabel.CENTER);

@@ -72,6 +72,7 @@ public class PracticasXPeticion extends JDialog {
         setModal(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(600, 400);
+        setLocationRelativeTo(null);
     }
 
     class ButtonRenderer extends JButton implements TableCellRenderer {
