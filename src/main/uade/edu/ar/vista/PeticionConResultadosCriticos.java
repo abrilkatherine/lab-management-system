@@ -15,10 +15,11 @@ import main.uade.edu.ar.util.DateUtil;
 
 public class PeticionConResultadosCriticos {
     private DefaultTableModel tableModel;
-    private JPanel contentPane;
-    private JTable practicasTable;
     private PeticionController peticionController;
+    // Controladores mantenidos para futuras funcionalidades (ej: mostrar detalles)
+    @SuppressWarnings("unused")
     private SucursalYUsuarioController sucursalYUsuarioController;
+    @SuppressWarnings("unused")
     private PacienteController pacienteController;
     private List<PeticionDto> peticionesLista;
 
@@ -39,13 +40,25 @@ public class PeticionConResultadosCriticos {
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Panel para título y subtítulo con BoxLayout vertical
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setOpaque(false);
+        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         // Título con estilo moderno
         JLabel titleLabel = StyleUtils.createTitle("⚠️ Peticiones con Resultados Críticos");
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(titleLabel);
+
+        titlePanel.add(Box.createVerticalStrut(5));
 
         // Subtítulo informativo
         JLabel subtitleLabel = StyleUtils.createSubtitle("Lista de peticiones que requieren atención inmediata");
-        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(subtitleLabel);
+        
+        headerPanel.add(titlePanel, BorderLayout.WEST);
 
         // Agregar el JPanel del encabezado al JPanel principal
         panel.add(headerPanel, BorderLayout.NORTH);

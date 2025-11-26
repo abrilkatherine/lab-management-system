@@ -6,6 +6,7 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.SucursalDto;
+import main.uade.edu.ar.util.ControllerFactory;
 
 
 import javax.swing.*;
@@ -49,8 +50,9 @@ public class AgregarPeticion extends JDialog {
         this.peticionController = peticionController;
         this.peticionesTodas = peticionesTodas;
         try{
-            this.sucursalYUsuarioController = SucursalYUsuarioController.getInstance();
-            this.pacienteController = PacienteController.getInstance();
+            ControllerFactory factory = ControllerFactory.getInstance();
+            this.sucursalYUsuarioController = factory.getSucursalYUsuarioController();
+            this.pacienteController = factory.getPacienteController();
         }  catch (Exception e) {
             e.printStackTrace();
         }

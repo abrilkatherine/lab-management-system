@@ -47,17 +47,29 @@ public class SucursalTodas {
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Panel para título y subtítulo con BoxLayout vertical
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setOpaque(false);
+        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         // Título con estilo moderno
         JLabel titleLabel = StyleUtils.createTitle("🏢 Sucursales");
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(titleLabel);
+
+        titlePanel.add(Box.createVerticalStrut(5));
 
         // Subtítulo informativo
         JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de sucursales del laboratorio");
-        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(subtitleLabel);
+        
+        headerPanel.add(titlePanel, BorderLayout.WEST);
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Sucursal", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarSucursal agregarSucursal = new AgregarSucursal(sucursalYUsuarioController, this);
             agregarSucursal.setVisible(true);
         });

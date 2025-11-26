@@ -1,7 +1,7 @@
 package main.uade.edu.ar.controller;
 
-import main.uade.edu.ar.dao.PacienteDao;
-import main.uade.edu.ar.dao.PeticionDao;
+import main.uade.edu.ar.dao.IPacienteDao;
+import main.uade.edu.ar.dao.IPeticionDao;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.exceptions.PacienteYaExisteException;
 import main.uade.edu.ar.mappers.PacienteMapper;
@@ -11,24 +11,61 @@ import main.uade.edu.ar.model.Peticion;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para gestionar pacientes.
+ * Aplica inyección de dependencias: recibe los DAOs por constructor.
+ * Esto permite:
+ * - Bajo acoplamiento (GRASP): depende de interfaces, no de implementaciones
+ * - Inversión de dependencias (SOLID): depende de abstracciones
+ * - Testabilidad: permite inyectar mocks para testing
+ */
 public class PacienteController {
 
     private static PacienteController pacienteController;
-    private static PacienteDao pacienteDao;
-    private static PeticionDao peticionDao;
-    private static List<Paciente> pacientes;
+    private final IPacienteDao pacienteDao;
+    private final IPeticionDao peticionDao;
+    private List<Paciente> pacientes;
 
-    private PacienteController() {
+    /**
+     * Constructor privado que recibe las dependencias (Dependency Injection)
+     * Aplica el principio de Inversión de Dependencias (DIP - SOLID)
+     */
+    private PacienteController(IPacienteDao pacienteDao, IPeticionDao peticionDao) throws Exception {
+        if (pacienteDao == null || peticionDao == null) {
+            throw new IllegalArgumentException("Los DAOs no pueden ser null");
+        }
+        this.pacienteDao = pacienteDao;
+        this.peticionDao = peticionDao;
+        this.pacientes = pacienteDao.getAll();
     }
 
+    /**
+     * Método estático para obtener la instancia (Singleton)
+     * NOTA: Este método está aquí por compatibilidad, pero se recomienda
+     * usar ControllerFactory para obtener instancias con dependencias inyectadas
+     * 
+     * @deprecated Usar ControllerFactory.getPacienteController() en su lugar
+     */
+    @Deprecated
     public static synchronized PacienteController getInstance() throws Exception {
         if (pacienteController == null) {
-            pacienteController = new PacienteController();
-            pacienteDao = new PacienteDao();
-            peticionDao = new PeticionDao();
-            pacientes = pacienteDao.getAll();
+            // Por compatibilidad, creamos los DAOs aquí
+            // En producción, usar ControllerFactory
+            main.uade.edu.ar.dao.PacienteDao dao = new main.uade.edu.ar.dao.PacienteDao();
+            main.uade.edu.ar.dao.PeticionDao peticionDao = new main.uade.edu.ar.dao.PeticionDao();
+            pacienteController = new PacienteController(dao, peticionDao);
         }
-
+        return pacienteController;
+    }
+    
+    /**
+     * Método público para crear instancia con dependencias inyectadas
+     * Usado por ControllerFactory
+     */
+    public static PacienteController createInstance(IPacienteDao pacienteDao, IPeticionDao peticionDao) throws Exception {
+        if (pacienteController == null) {
+            pacienteController = new PacienteController(pacienteDao, peticionDao);
+        }
         return pacienteController;
     }
 

@@ -4,48 +4,96 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
+import main.uade.edu.ar.util.ControllerFactory;
 import main.uade.edu.ar.util.StyleUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Clase principal de la interfaz gráfica.
+ * Usa ControllerFactory para obtener controladores con dependencias inyectadas.
+ */
 public class Menu {
     private static BarraNavegacion barraNavegacion;
+    // Variables para futuras funcionalidades - mantenidas para extensibilidad
+    @SuppressWarnings("unused")
     private static SucursalTodas sucursalTodas;
+    @SuppressWarnings("unused")
     private static PacientesTodas pacienteTodas;
+    @SuppressWarnings("unused")
     private static UsuariosTodos usuariosTodos;
+    @SuppressWarnings("unused")
     private static PeticionesTodas peticionesTodas;
+    @SuppressWarnings("unused")
     private static PeticionConResultadosCriticos peticionConResultadoCriticos;
     private static JPanel cardPanel;
+    @SuppressWarnings("unused")
     private static CardLayout cardLayout;
+    // Controladores obtenidos pero no usados directamente en esta clase
+    // Se pasan a las vistas a través de BarraNavegacion
+    @SuppressWarnings("unused")
     private static SucursalYUsuarioController sucursalYUsuarioController;
+    @SuppressWarnings("unused")
     private static PacienteController pacienteController;
+    @SuppressWarnings("unused")
     private static PeticionController peticionController;
 
     public static void main(String[] args) {
         try {
-            sucursalYUsuarioController = SucursalYUsuarioController.getInstance(); //Obtenemos la instancia del controller
-            pacienteController = PacienteController.getInstance();
-            peticionController = PeticionController.getInstance();
+            // Usar Factory para obtener controladores con dependencias inyectadas
+            ControllerFactory factory = ControllerFactory.getInstance();
+            sucursalYUsuarioController = factory.getSucursalYUsuarioController();
+            pacienteController = factory.getPacienteController();
+            peticionController = factory.getPeticionController();
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                null,
+                "❌ Error al inicializar el sistema: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
         }
 
-
+        // Mostrar la ventana de login en lugar del menú directamente
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowMenu();
+                new LoginWindow().setVisible(true);
             }
         });
     }
 
-    private static void createAndShowMenu() {
+    /**
+     * Crea y muestra el menú principal.
+     * Este método puede ser llamado desde LoginWindow después de una autenticación exitosa.
+     */
+    public static void createAndShowMenu() {
+        // Verificar que hay una sesión activa
+        main.uade.edu.ar.util.SessionManager sessionManager = main.uade.edu.ar.util.SessionManager.getInstance();
+        if (!sessionManager.haySesionActiva()) {
+            // Si no hay sesión, mostrar login
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new LoginWindow().setVisible(true);
+                }
+            });
+            return;
+        }
+        
         // Aplicar Look & Feel moderno
         StyleUtils.setModernLookAndFeel();
         
         // Crear una instancia de JFrame para el menú
-        JFrame frame = new JFrame("🏥 Lab Management System");
+        String titulo = "🏥 Lab Management System";
+        if (sessionManager.getUsuarioActual() != null) {
+            titulo += " - " + sessionManager.getNombreUsuario() + 
+                      " (" + sessionManager.getRolUsuario() + ")";
+        }
+        JFrame frame = new JFrame(titulo);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setBackground(StyleUtils.WHITE);

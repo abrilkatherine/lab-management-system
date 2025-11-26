@@ -1,40 +1,70 @@
 package main.uade.edu.ar.controller;
 
-import main.uade.edu.ar.dao.PeticionDao;
-import main.uade.edu.ar.dao.SucursalDao;
-import main.uade.edu.ar.dao.UsuarioDao;
+import main.uade.edu.ar.dao.IPeticionDao;
+import main.uade.edu.ar.dao.ISucursalDao;
+import main.uade.edu.ar.dao.IUsuarioDao;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.dto.UsuarioDto;
 import main.uade.edu.ar.model.Peticion;
 import main.uade.edu.ar.model.Sucursal;
 import main.uade.edu.ar.model.Usuario;
+import main.uade.edu.ar.util.PasswordUtil;
 
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para gestionar sucursales y usuarios.
+ * Aplica inyección de dependencias: recibe los DAOs por constructor.
+ */
 public class SucursalYUsuarioController {
 
     private static SucursalYUsuarioController sucursalController;
-    private static SucursalDao sucursalDao;
-    private static PeticionDao peticionDao;
-    private static List<Sucursal> sucursales;
-    private static UsuarioDao usuarioDao;
-    private static List<Usuario> usuarios;
+    private final ISucursalDao sucursalDao;
+    private final IPeticionDao peticionDao;
+    private final IUsuarioDao usuarioDao;
+    private List<Sucursal> sucursales;
+    private List<Usuario> usuarios;
 
-    private SucursalYUsuarioController() {
+    /**
+     * Constructor privado que recibe las dependencias (Dependency Injection)
+     */
+    private SucursalYUsuarioController(ISucursalDao sucursalDao, IUsuarioDao usuarioDao, IPeticionDao peticionDao) throws Exception {
+        if (sucursalDao == null || usuarioDao == null || peticionDao == null) {
+            throw new IllegalArgumentException("Los DAOs no pueden ser null");
+        }
+        this.sucursalDao = sucursalDao;
+        this.usuarioDao = usuarioDao;
+        this.peticionDao = peticionDao;
+        this.sucursales = sucursalDao.getAll();
+        this.usuarios = usuarioDao.getAll();
     }
 
+    /**
+     * Método estático para obtener la instancia (Singleton)
+     * @deprecated Usar ControllerFactory.getSucursalYUsuarioController() en su lugar
+     */
+    @Deprecated
     public static synchronized SucursalYUsuarioController getInstance() throws Exception {
         if (sucursalController == null) {
-            sucursalController = new SucursalYUsuarioController();
-            sucursalDao = new SucursalDao();
-            usuarioDao = new UsuarioDao();
-            peticionDao = new PeticionDao();
-            sucursales = sucursalDao.getAll();
-            usuarios = usuarioDao.getAll();
+            // Por compatibilidad, creamos los DAOs aquí
+            main.uade.edu.ar.dao.SucursalDao sucursalDao = new main.uade.edu.ar.dao.SucursalDao();
+            main.uade.edu.ar.dao.UsuarioDao usuarioDao = new main.uade.edu.ar.dao.UsuarioDao();
+            main.uade.edu.ar.dao.PeticionDao peticionDao = new main.uade.edu.ar.dao.PeticionDao();
+            sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);
         }
-
+        return sucursalController;
+    }
+    
+    /**
+     * Método público para crear instancia con dependencias inyectadas
+     * Usado por ControllerFactory
+     */
+    public static SucursalYUsuarioController createInstance(ISucursalDao sucursalDao, IUsuarioDao usuarioDao, IPeticionDao peticionDao) throws Exception {
+        if (sucursalController == null) {
+            sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);
+        }
         return sucursalController;
     }
 
@@ -167,6 +197,8 @@ public class SucursalYUsuarioController {
 
     public Usuario crearUsuario(UsuarioDto usuarioDTO) throws Exception {
         if (getUsuario(usuarioDTO.getId()) == null) {
+            // Guardar la contraseña en texto plano en el JSON
+            // El hashing se hace solo en la interfaz durante la autenticación
             Usuario usuario = toModel(usuarioDTO);
             usuarioDao.save(usuario);
             usuarios.add(usuario);
@@ -181,12 +213,22 @@ public class SucursalYUsuarioController {
                 .orElse(null);
 
         if (usuarioExistente != null) {
+            // Guardar la contraseña en texto plano en el JSON
+            // El hashing se hace solo en la interfaz durante la autenticación
+            String contrasenia = usuarioDTO.getContrasenia();
+            
+            // Si la contraseña está vacía, mantener la contraseña original
+            if (contrasenia == null || contrasenia.trim().isEmpty()) {
+                contrasenia = usuarioExistente.getContrasenia();
+            }
+            
             usuarioExistente.setId(usuarioDTO.getId());
             usuarioExistente.setNombre(usuarioDTO.getNombre());
-            usuarioExistente.setContrasenia(usuarioDTO.getContrasenia());
-            usuarioExistente.setRol(usuarioExistente.getRol());
+            usuarioExistente.setContrasenia(contrasenia);
+            usuarioExistente.setRol(usuarioDTO.getRol());
             usuarioExistente.setNacimiento(usuarioDTO.getNacimiento());
-            usuarioDao.update(toModel(usuarioDTO));
+            
+            usuarioDao.update(usuarioExistente);
         }
     }
 
@@ -200,6 +242,62 @@ public class SucursalYUsuarioController {
             usuarioDao.delete(id);
             usuarios.remove(usuario);
         }
+    }
+
+    /**
+     * Autentica un usuario verificando su nombre y contraseña.
+     * La contraseña del JSON está en texto plano, se hashea solo para comparación.
+     * 
+     * @param nombreUsuario El nombre del usuario
+     * @param contraseniaPlana La contraseña en texto plano ingresada por el usuario
+     * @return UsuarioDto si la autenticación es exitosa, null en caso contrario
+     */
+    public UsuarioDto autenticarUsuario(String nombreUsuario, String contraseniaPlana) {
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty() || 
+            contraseniaPlana == null || contraseniaPlana.isEmpty()) {
+            return null;
+        }
+
+        // Buscar usuario por nombre
+        Usuario usuario = usuarios.stream()
+                .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombreUsuario.trim()))
+                .findFirst()
+                .orElse(null);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        // La contraseña en el JSON está en texto plano
+        // Hasheamos ambas para comparar (la ingresada y la del JSON)
+        String contraseniaDelJson = usuario.getContrasenia();
+        String hashContraseniaIngresada = PasswordUtil.hashPassword(contraseniaPlana);
+        String hashContraseniaDelJson = PasswordUtil.hashPassword(contraseniaDelJson);
+        
+        // Comparar los hashes
+        if (hashContraseniaIngresada != null && hashContraseniaIngresada.equals(hashContraseniaDelJson)) {
+            return toDto(usuario);
+        }
+
+        return null;
+    }
+
+    /**
+     * Busca un usuario por su nombre.
+     * 
+     * @param nombreUsuario El nombre del usuario a buscar
+     * @return UsuarioDto si se encuentra, null en caso contrario
+     */
+    public UsuarioDto getUsuarioPorNombre(String nombreUsuario) {
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+            return null;
+        }
+
+        return usuarios.stream()
+                .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombreUsuario.trim()))
+                .findFirst()
+                .map(SucursalYUsuarioController::toDto)
+                .orElse(null);
     }
 
     public static Usuario toModel(UsuarioDto usuarioDto) {

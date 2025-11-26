@@ -2,7 +2,12 @@ package main.uade.edu.ar;
 
 import main.uade.edu.ar.controller.*;
 import main.uade.edu.ar.tests.LabManagementSystemTests;
+import main.uade.edu.ar.util.ControllerFactory;
 
+/**
+ * Clase principal del sistema.
+ * Aplica el patrón Factory para crear controladores con dependencias inyectadas.
+ */
 public class Main {
     
     // Controladores del sistema (Singleton pattern)
@@ -26,16 +31,19 @@ public class Main {
     }
     
     /**
-     * Inicializa todos los controladores del sistema
+     * Inicializa todos los controladores del sistema usando ControllerFactory.
+     * Aplica el patrón Factory (GRASP) y Dependency Injection (SOLID).
+     * 
      * @throws Exception si hay error en la inicialización
      */
     public static void initializeSystem() throws Exception {
         System.out.println("🚀 Inicializando Sistema de Gestión de Laboratorio...");
         
-        // Inicializar controladores (Singleton pattern)
-        pacienteController = PacienteController.getInstance();
-        peticionController = PeticionController.getInstance();
-        sucursalYUsuarioController = SucursalYUsuarioController.getInstance();
+        // Usar Factory para crear controladores con dependencias inyectadas
+        ControllerFactory factory = ControllerFactory.getInstance();
+        pacienteController = factory.getPacienteController();
+        peticionController = factory.getPeticionController();
+        sucursalYUsuarioController = factory.getSucursalYUsuarioController();
         
         System.out.println("✅ Sistema inicializado correctamente");
     }

@@ -43,19 +43,31 @@ public class UsuariosTodos {
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Panel para título y subtítulo con BoxLayout vertical
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setOpaque(false);
+        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         // Título con estilo moderno
         JLabel titleLabel = StyleUtils.createTitle("👤 Usuarios");
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(titleLabel);
+
+        titlePanel.add(Box.createVerticalStrut(5));
 
         // Subtítulo informativo
         JLabel subtitleLabel = StyleUtils.createSubtitle("Gestión de usuarios del laboratorio");
-        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(subtitleLabel);
+        
+        headerPanel.add(titlePanel, BorderLayout.WEST);
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Usuario", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
 
         // Agregar ActionListener al botón "Agregar"
-        addButton.addActionListener(e -> {
+        addButton.addActionListener(_ -> {
             AgregarUsuario agregarUsuario = new AgregarUsuario(sucursalYUsuarioController, this);
             agregarUsuario.setVisible(true);
         });
@@ -107,10 +119,11 @@ public class UsuariosTodos {
                 if (column == 2 && row < table.getRowCount()) {
                     String nombreUsuario = (String) tableModel.getValueAt(row, 0);
 
-
+                    // Obtener la lista actualizada de usuarios
+                    List<UsuarioDto> usuariosActualizados = sucursalYUsuarioController.getAllUsuarios();
                     UsuarioDto usuario = null;
-                    for (UsuarioDto u : usuarios) {
-                        if (u.getNombre() == nombreUsuario) {
+                    for (UsuarioDto u : usuariosActualizados) {
+                        if (u.getNombre() != null && u.getNombre().equals(nombreUsuario)) {
                             usuario = u;
                             break;
                         }
@@ -118,9 +131,15 @@ public class UsuariosTodos {
                     // Crear y mostrar el diálogo de editar usuario
                     if (usuario != null) {
                         // Crear y mostrar el diálogo de editar usuario, pasando el usuario correspondiente
-
                         EditarUsuario editarUsuario = new EditarUsuario(usuario, sucursalYUsuarioController, usuariosTodos);
                         editarUsuario.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                            table,
+                            "❌ No se pudo encontrar el usuario seleccionado",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
 
@@ -143,9 +162,11 @@ public class UsuariosTodos {
                     
                     // Con opciones personalizadas, 0 = "No", 1 = "Sí"
                     if (confirm == 1) { // "✅ Sí" está en la posición 1
+                        // Obtener la lista actualizada de usuarios
+                        List<UsuarioDto> usuariosActualizados = sucursalYUsuarioController.getAllUsuarios();
                         UsuarioDto usuario = null;
-                        for (UsuarioDto u : usuarios) {
-                            if (u.getNombre().equals(nombreUsuario)) {
+                        for (UsuarioDto u : usuariosActualizados) {
+                            if (u.getNombre() != null && u.getNombre().equals(nombreUsuario)) {
                                 usuario = u;
                                 break;
                             }
