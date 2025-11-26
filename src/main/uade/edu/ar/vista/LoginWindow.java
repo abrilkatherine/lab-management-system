@@ -2,7 +2,7 @@ package main.uade.edu.ar.vista;
 
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.UsuarioDto;
-import main.uade.edu.ar.util.ControllerFactory;
+import main.uade.edu.ar.factory.ControllerFactory;
 import main.uade.edu.ar.util.SessionManager;
 import main.uade.edu.ar.util.StyleUtils;
 

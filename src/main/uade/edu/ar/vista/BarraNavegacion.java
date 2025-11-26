@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
-import main.uade.edu.ar.util.ControllerFactory;
+import main.uade.edu.ar.factory.ControllerFactory;
 import main.uade.edu.ar.util.StyleUtils;
 
 public class BarraNavegacion {
@@ -23,7 +23,6 @@ public class BarraNavegacion {
     private JPanel cardPanel;
 
     public JPanel createNavBarPanel() {
-        // Crear un panel para el menú con gradiente y sombra
         menuPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -31,7 +30,6 @@ public class BarraNavegacion {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
-                // Gradiente de fondo
                 GradientPaint gradient = new GradientPaint(
                     0, 0, StyleUtils.PRIMARY_BLUE,
                     0, getHeight(), StyleUtils.PRIMARY_DARK
@@ -39,7 +37,6 @@ public class BarraNavegacion {
                 g2.setPaint(gradient);
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 
-                // Sombra inferior
                 g2.setColor(new Color(0, 0, 0, 15));
                 g2.fillRect(0, getHeight() - 3, getWidth(), 3);
                 
@@ -49,7 +46,6 @@ public class BarraNavegacion {
         menuPanel.setLayout(new BorderLayout());
         menuPanel.setPreferredSize(new Dimension(0, 110));
 
-        // Panel superior con logo/título
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setOpaque(false);
         
@@ -60,19 +56,16 @@ public class BarraNavegacion {
         
         menuPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Crear un panel para los botones del menú
         buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 15));
 
-        // Crear botones con estilo moderno
         JButton homeButton = StyleUtils.createNavButton("👥 Pacientes");
         JButton sucursalesButton = StyleUtils.createNavButton("🏢 Sucursales");
         JButton peticionesButton = StyleUtils.createNavButton("📋 Peticiones");
         JButton criticasButton = StyleUtils.createNavButton("⚠️ Críticas");
         JButton usuariosButton = StyleUtils.createNavButton("👤 Usuarios");
 
-        // Configurar acciones de los botones
         setupButtonActions(homeButton, "👥 Pacientes");
         setupButtonActions(sucursalesButton, "🏢 Sucursales");
         setupButtonActions(peticionesButton, "📋 Peticiones");
@@ -85,11 +78,8 @@ public class BarraNavegacion {
         buttonPanel.add(criticasButton);
         buttonPanel.add(usuariosButton);
 
-
-        // Agregar el panel de botones al panel del menú
         menuPanel.add(buttonPanel);
 
-        // Crear un panel con CardLayout para contener las diferentes vistas
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
@@ -102,8 +92,6 @@ public class BarraNavegacion {
             e.printStackTrace();
         }
 
-
-        // Agregar los paneles de vistas al cardPanel (solo si los controladores están disponibles)
         if (pacienteController != null) {
             cardPanel.add(new PacientesTodas(pacienteController).createPanel(), "pacientesTodas");
         }
@@ -116,7 +104,6 @@ public class BarraNavegacion {
             cardPanel.add(new PeticionConResultadosCriticos(peticionController, sucursalYUsuarioController, pacienteController).createPanel(), "PeticionConResultadoCriticos");
         }
 
-        // Crear un panel principal que contenga tanto el menú como el cardPanel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(menuPanel, BorderLayout.NORTH);
         mainPanel.add(cardPanel, BorderLayout.CENTER);
@@ -124,12 +111,10 @@ public class BarraNavegacion {
         return mainPanel;
     }
 
-    // Método para obtener el cardPanel
     public JPanel getCardPanel() {
         return cardPanel;
     }
 
-    // Método de utilidad para crear botones (actualizado para nuevos estilos)
     private void setupButtonActions(JButton button, String text) {
         button.addActionListener(new ActionListener() {
             @Override

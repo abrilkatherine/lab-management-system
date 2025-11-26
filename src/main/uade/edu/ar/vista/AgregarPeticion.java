@@ -6,7 +6,7 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.SucursalDto;
-import main.uade.edu.ar.util.ControllerFactory;
+import main.uade.edu.ar.factory.ControllerFactory;
 
 
 import javax.swing.*;

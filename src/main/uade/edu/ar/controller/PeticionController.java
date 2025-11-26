@@ -14,17 +14,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Controlador para gestionar peticiones, prácticas y resultados.
- * Aplica inyección de dependencias: recibe el DAO por constructor.
+ * Controlador para gestionar la lógica de negocio de peticiones, prácticas y resultados.
+ * Maneja operaciones CRUD y reglas de negocio relacionadas.
  */
 public class PeticionController {
     private static PeticionController peticionController;
     private final IPeticionDao peticionDao;
     private List<Peticion> peticiones;
 
-    /**
-     * Constructor privado que recibe las dependencias (Dependency Injection)
-     */
     private PeticionController(IPeticionDao peticionDao) throws Exception {
         if (peticionDao == null) {
             throw new IllegalArgumentException("El DAO no puede ser null");
@@ -33,24 +30,15 @@ public class PeticionController {
         this.peticiones = peticionDao.getAll();
     }
 
-    /**
-     * Método estático para obtener la instancia (Singleton)
-     * @deprecated Usar ControllerFactory.getPeticionController() en su lugar
-     */
     @Deprecated
     public static synchronized PeticionController getInstance() throws Exception {
         if (peticionController == null) {
-            // Por compatibilidad, creamos el DAO aquí
             main.uade.edu.ar.dao.PeticionDao dao = new main.uade.edu.ar.dao.PeticionDao();
             peticionController = new PeticionController(dao);
         }
         return peticionController;
     }
     
-    /**
-     * Método público para crear instancia con dependencias inyectadas
-     * Usado por ControllerFactory
-     */
     public static PeticionController createInstance(IPeticionDao peticionDao) throws Exception {
         if (peticionController == null) {
             peticionController = new PeticionController(peticionDao);
@@ -58,8 +46,11 @@ public class PeticionController {
         return peticionController;
     }
 
-    // Peticiones
-
+    /**
+     * Obtiene todas las peticiones del sistema.
+     * 
+     * @return lista de peticiones en formato DTO
+     */
     public List<PeticionDto> getAllPeticiones(){
         return peticiones.stream()
                 .map(PeticionMapper::toDto)
@@ -87,6 +78,12 @@ public class PeticionController {
         }
     }
 
+    /**
+     * Crea una nueva petición en el sistema.
+     * 
+     * @param peticionDTO datos de la petición a crear
+     * @throws Exception si hay error al crear la petición
+     */
     public void crearPeticion(PeticionDto peticionDTO) throws Exception {
         if (getPeticion(peticionDTO.getId()).isEmpty()) {
             Peticion peticion = PeticionMapper.toModel(peticionDTO);
@@ -128,7 +125,6 @@ public class PeticionController {
         }
     }
 
-    // Practicas
     public Practica getPractica(int id) {
         return peticiones.stream()
                 .flatMap(peticion -> peticion.getPracticas().stream())
@@ -197,8 +193,6 @@ public class PeticionController {
         System.out.println("La práctica solicitada no existe");
     }
 
-    // Resultados
-
     public void crearResultado(int idPractica, ResultadoDto resultadoDTO) throws Exception {
         for (Peticion peticion : peticiones) {
             Optional<Practica> practicaOptional = peticion.getPracticas()
@@ -225,6 +219,11 @@ public class PeticionController {
         crearResultado(idPractica, null);
     }
 
+    /**
+     * Obtiene todas las peticiones que contienen al menos un resultado crítico.
+     * 
+     * @return lista de peticiones con resultados críticos
+     */
     public List<PeticionDto> getPeticionesConResultadosCriticos() {
         List<PeticionDto> peticionesConResultadosCriticos = new ArrayList<>();
 

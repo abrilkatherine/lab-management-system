@@ -1,4 +1,4 @@
-package main.uade.edu.ar.util;
+package main.uade.edu.ar.factory;
 
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.controller.PeticionController;
@@ -6,25 +6,18 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dao.*;
 
 /**
- * Factory para crear controladores con sus dependencias inyectadas.
- * Aplica el patrón Factory (GRASP) y Dependency Injection (SOLID).
- * 
- * Responsabilidades:
- * - Crear instancias de DAOs
- * - Crear instancias de controladores con sus dependencias
- * - Centralizar la lógica de creación de objetos
+ * Factory para crear y gestionar instancias de controladores con dependencias inyectadas.
+ * Implementa el patrón Singleton y Factory.
  */
 public class ControllerFactory {
     
     private static ControllerFactory instance;
     
-    // DAOs - instancias únicas (podrían ser singletons si es necesario)
     private IPacienteDao pacienteDao;
     private IPeticionDao peticionDao;
     private ISucursalDao sucursalDao;
     private IUsuarioDao usuarioDao;
     
-    // Controladores - instancias únicas (singletons)
     private PacienteController pacienteController;
     private PeticionController peticionController;
     private SucursalYUsuarioController sucursalYUsuarioController;
@@ -34,7 +27,10 @@ public class ControllerFactory {
     }
     
     /**
-     * Obtiene la instancia única del factory (Singleton)
+     * Obtiene la instancia única del factory (Singleton).
+     * 
+     * @return instancia de ControllerFactory
+     * @throws Exception si hay error al inicializar
      */
     public static synchronized ControllerFactory getInstance() throws Exception {
         if (instance == null) {
@@ -43,10 +39,6 @@ public class ControllerFactory {
         return instance;
     }
     
-    /**
-     * Inicializa todos los DAOs
-     * Aplica el principio Creator (GRASP): el Factory es responsable de crear los DAOs
-     */
     private void initializeDAOs() throws Exception {
         pacienteDao = new PacienteDao();
         peticionDao = new PeticionDao();
@@ -55,8 +47,10 @@ public class ControllerFactory {
     }
     
     /**
-     * Obtiene el controlador de pacientes (Singleton)
-     * Aplica inyección de dependencias: el controlador recibe sus DAOs por constructor
+     * Obtiene el controlador de pacientes (Singleton).
+     * 
+     * @return instancia de PacienteController
+     * @throws Exception si hay error al crear el controlador
      */
     public PacienteController getPacienteController() throws Exception {
         if (pacienteController == null) {
@@ -66,7 +60,10 @@ public class ControllerFactory {
     }
     
     /**
-     * Obtiene el controlador de peticiones (Singleton)
+     * Obtiene el controlador de peticiones (Singleton).
+     * 
+     * @return instancia de PeticionController
+     * @throws Exception si hay error al crear el controlador
      */
     public PeticionController getPeticionController() throws Exception {
         if (peticionController == null) {
@@ -76,7 +73,10 @@ public class ControllerFactory {
     }
     
     /**
-     * Obtiene el controlador de sucursales y usuarios (Singleton)
+     * Obtiene el controlador de sucursales y usuarios (Singleton).
+     * 
+     * @return instancia de SucursalYUsuarioController
+     * @throws Exception si hay error al crear el controlador
      */
     public SucursalYUsuarioController getSucursalYUsuarioController() throws Exception {
         if (sucursalYUsuarioController == null) {
@@ -89,9 +89,6 @@ public class ControllerFactory {
         return sucursalYUsuarioController;
     }
     
-    /**
-     * Método de utilidad para resetear las instancias (útil para testing)
-     */
     public void reset() {
         pacienteController = null;
         peticionController = null;
