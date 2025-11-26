@@ -494,12 +494,7 @@ public class LoginWindow extends JFrame {
      * Muestra un diálogo para recuperar la contraseña
      */
     private void mostrarRecuperacionPassword() {
-        String nombreUsuario = JOptionPane.showInputDialog(
-            this,
-            "Ingrese su nombre de usuario:",
-            "Recuperar Contraseña",
-            JOptionPane.QUESTION_MESSAGE
-        );
+        String nombreUsuario = mostrarDialogoIngresarUsuario();
         
         if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
             return; // Usuario canceló o no ingresó nada
@@ -528,6 +523,106 @@ public class LoginWindow extends JFrame {
             );
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Muestra un diálogo personalizado para ingresar el nombre de usuario
+     */
+    private String mostrarDialogoIngresarUsuario() {
+        JDialog dialog = new JDialog(this, "Recuperar Contraseña", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setResizable(false);
+        
+        // Panel principal
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(StyleUtils.WHITE);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        
+        // Label
+        JLabel label = new JLabel("Ingrese su nombre de usuario:");
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setForeground(StyleUtils.DARK_TEXT);
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        mainPanel.add(label, gbc);
+        
+        // Campo de texto
+        JTextField textField = StyleUtils.createModernTextField(20);
+        textField.setPreferredSize(new Dimension(350, 42));
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 25, 0);
+        mainPanel.add(textField, gbc);
+        
+        // Panel de botones
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        buttonPanel.setOpaque(false);
+        
+        JButton cancelButton = StyleUtils.createModernButton("Cancelar", StyleUtils.SECONDARY_GRAY, StyleUtils.WHITE);
+        cancelButton.setPreferredSize(new Dimension(140, 42));
+        
+        JButton okButton = StyleUtils.createActionButton("OK", "add");
+        okButton.setPreferredSize(new Dimension(140, 42));
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(okButton);
+        
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(buttonPanel, gbc);
+        
+        // Variable para almacenar el resultado
+        final String[] resultado = {null};
+        
+        // Listeners
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resultado[0] = textField.getText();
+                dialog.dispose();
+            }
+        });
+        
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resultado[0] = null;
+                dialog.dispose();
+            }
+        });
+        
+        textField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    resultado[0] = textField.getText();
+                    dialog.dispose();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    resultado[0] = null;
+                    dialog.dispose();
+                }
+            }
+        });
+        
+        dialog.add(mainPanel, BorderLayout.CENTER);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        
+        // Focus en el campo de texto
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                textField.requestFocus();
+            }
+        });
+        
+        dialog.setVisible(true);
+        
+        return resultado[0];
     }
     
     /**
