@@ -72,6 +72,7 @@ public class PeticionesTodas {
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Petición", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
+        addButton.setPreferredSize(new Dimension(230, 40));
         addButton.addActionListener(_ -> {
             AgregarPeticion agregarPeticion = new AgregarPeticion(peticionController, this);
             agregarPeticion.setVisible(true);

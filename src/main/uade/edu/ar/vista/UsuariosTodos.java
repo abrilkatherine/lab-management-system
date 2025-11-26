@@ -65,6 +65,7 @@ public class UsuariosTodos {
 
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Usuario", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
+        addButton.setPreferredSize(new Dimension(230, 40));
 
         // Agregar ActionListener al botón "Agregar"
         addButton.addActionListener(_ -> {

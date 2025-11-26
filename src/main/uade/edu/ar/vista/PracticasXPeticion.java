@@ -58,6 +58,7 @@ public class PracticasXPeticion extends JDialog {
         practicasTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
         practicasTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JTextField()));
         agregarButton = StyleUtils.createModernButton("➕ Agregar Práctica", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
+        agregarButton.setPreferredSize(new Dimension(230, 40));
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(agregarButton);
         contentPane.add(buttonPanel, BorderLayout.EAST);

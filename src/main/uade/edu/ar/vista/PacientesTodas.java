@@ -61,6 +61,7 @@ public class PacientesTodas {
         headerPanel.add(titlePanel, BorderLayout.WEST);
         
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Paciente", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
+        addButton.setPreferredSize(new Dimension(230, 40));
         addButton.addActionListener(_ -> {
             AgregarPaciente agregarPaciente = new AgregarPaciente(pacienteController, this);
             agregarPaciente.setVisible(true);
