@@ -31,16 +31,6 @@ public class PacienteController {
         this.pacientes = pacienteDao.getAll();
     }
 
-    @Deprecated
-    public static synchronized PacienteController getInstance() throws Exception {
-        if (pacienteController == null) {
-            main.uade.edu.ar.dao.PacienteDao dao = new main.uade.edu.ar.dao.PacienteDao();
-            main.uade.edu.ar.dao.PeticionDao peticionDao = new main.uade.edu.ar.dao.PeticionDao();
-            pacienteController = new PacienteController(dao, peticionDao);
-        }
-        return pacienteController;
-    }
-    
     public static PacienteController createInstance(IPacienteDao pacienteDao, IPeticionDao peticionDao) throws Exception {
         if (pacienteController == null) {
             pacienteController = new PacienteController(pacienteDao, peticionDao);

@@ -38,17 +38,6 @@ public class SucursalYUsuarioController {
         this.usuarios = usuarioDao.getAll();
     }
 
-    @Deprecated
-    public static synchronized SucursalYUsuarioController getInstance() throws Exception {
-        if (sucursalController == null) {
-            main.uade.edu.ar.dao.SucursalDao sucursalDao = new main.uade.edu.ar.dao.SucursalDao();
-            main.uade.edu.ar.dao.UsuarioDao usuarioDao = new main.uade.edu.ar.dao.UsuarioDao();
-            main.uade.edu.ar.dao.PeticionDao peticionDao = new main.uade.edu.ar.dao.PeticionDao();
-            sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);
-        }
-        return sucursalController;
-    }
-    
     public static SucursalYUsuarioController createInstance(ISucursalDao sucursalDao, IUsuarioDao usuarioDao, IPeticionDao peticionDao) throws Exception {
         if (sucursalController == null) {
             sucursalController = new SucursalYUsuarioController(sucursalDao, usuarioDao, peticionDao);

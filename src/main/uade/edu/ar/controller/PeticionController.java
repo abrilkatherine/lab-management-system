@@ -30,15 +30,6 @@ public class PeticionController {
         this.peticiones = peticionDao.getAll();
     }
 
-    @Deprecated
-    public static synchronized PeticionController getInstance() throws Exception {
-        if (peticionController == null) {
-            main.uade.edu.ar.dao.PeticionDao dao = new main.uade.edu.ar.dao.PeticionDao();
-            peticionController = new PeticionController(dao);
-        }
-        return peticionController;
-    }
-    
     public static PeticionController createInstance(IPeticionDao peticionDao) throws Exception {
         if (peticionController == null) {
             peticionController = new PeticionController(peticionDao);
