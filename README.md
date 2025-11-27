@@ -85,17 +85,18 @@ make help
 ```
 lab-management-system/
 ├── src/main/uade/edu/ar/
-│   ├── controller/     # Controladores de negocio
+│   ├── controller/    # Controladores de negocio
 │   ├── dao/           # Acceso a datos
 │   ├── dto/           # Objetos de transferencia
 │   ├── enums/         # Enumeraciones
 │   ├── exceptions/    # Excepciones personalizadas
-│   ├── factory/       # Fábricas (Factory Pattern)
+│   ├── factory/       # Fábrica (Factory Pattern)
 │   ├── mappers/       # Conversores entre DTO y Model
 │   ├── model/         # Entidades del dominio
 │   ├── util/          # Utilidades y helpers
 │   └── vista/         # Interfaces gráficas (Swing)
 ├── docs/              # Documentación del proyecto
+│   ├── DIAGRAMA_CLASES.md
 │   ├── DIAGRAMAS_FLUJO.md
 │   ├── PATRONES_GRASP_SOLID.md
 │   └── PROPUESTA_NEGOCIO.md
@@ -117,10 +118,15 @@ lab-management-system/
 
 Este proyecto cuenta con documentación detallada en la carpeta `docs/`:
 
-- **[SETUP.md](docs/SETUP.md)** - Guía rápida de instalación y configuración
-- **[PROPUESTA_NEGOCIO.md](docs/PROPUESTA_NEGOCIO.md)** - Descripción del problema de negocio, solución propuesta y funcionalidades
-- **[DIAGRAMAS_FLUJO.md](docs/DIAGRAMAS_FLUJO.md)** - Diagramas de flujo completos del sistema (inicialización, autenticación, CRUD, arquitectura)
-- **[PATRONES_GRASP_SOLID.md](docs/PATRONES_GRASP_SOLID.md)** - Análisis detallado de patrones GRASP y SOLID implementados con ejemplos de código
+
+### 📄 Documentación Técnica
+- **[DIAGRAMA_CLASES.md](docs/DIAGRAMA_CLASES.md)** - Diagrama de clases completo con relaciones
+- **[DIAGRAMAS_FLUJO.md](docs/DIAGRAMAS_FLUJO.md)** - Diagramas de flujo del sistema
+- **[PATRONES_GRASP_SOLID.md](docs/PATRONES_GRASP_SOLID.md)** - Análisis de patrones y principios SOLID
+
+### 🚀 Guías
+- **[SETUP.md](docs/SETUP.md)** - Guía de instalación y configuración
+- **[PROPUESTA_NEGOCIO.md](docs/PROPUESTA_NEGOCIO.md)** - Propuesta de negocio detallada
 
 ## 🏛️ Arquitectura
 
