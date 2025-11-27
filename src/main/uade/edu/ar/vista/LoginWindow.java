@@ -57,25 +57,21 @@ public class LoginWindow extends JFrame {
         // Aplicar Look & Feel moderno
         StyleUtils.setModernLookAndFeel();
         
-        // Configurar la ventana
         setTitle("🏥 Lab Management System - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         
-        // Crear campos de texto modernos
         usuarioField = StyleUtils.createModernTextField(20);
         contraseniaField = StyleUtils.createModernPasswordField(20);
         contraseniaVisibleField = StyleUtils.createModernTextField(20);
         contraseniaVisibleField.setVisible(false);
         
-        // Crear botón para mostrar/ocultar contraseña
         togglePasswordButton = new JButton("👁️") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Fondo sutil en hover
                 if (getModel().isRollover()) {
                     g2.setColor(StyleUtils.LIGHT_GRAY);
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
@@ -95,7 +91,6 @@ public class LoginWindow extends JFrame {
         togglePasswordButton.setToolTipText("Mostrar/Ocultar contraseña");
         togglePasswordButton.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         
-        // Crear botones
         loginButton = StyleUtils.createActionButton("🔐 Iniciar Sesión", "add");
         loginButton.setPreferredSize(new Dimension(220, 45));
         
@@ -109,7 +104,6 @@ public class LoginWindow extends JFrame {
     private void setupLayout() {
         setLayout(new BorderLayout());
         
-        // Panel principal con fondo degradado
         JPanel mainPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -117,7 +111,6 @@ public class LoginWindow extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
-                // Gradiente de fondo sutil
                 GradientPaint gradient = new GradientPaint(
                     0, 0, StyleUtils.VERY_LIGHT_GRAY,
                     0, getHeight(), StyleUtils.WHITE
@@ -135,26 +128,22 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
         
-        // Panel de título con icono separado
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setOpaque(false);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
         
-        // Icono grande centrado arriba
         JLabel iconLabel = new JLabel("🏥");
         iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 64));
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
         iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         titlePanel.add(iconLabel, BorderLayout.NORTH);
         
-        // Título sin emoji
         JLabel titleLabel = new JLabel("Lab Management System");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(StyleUtils.PRIMARY_BLUE);
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
         
-        // Subtítulo
         JLabel subtitleLabel = new JLabel("Iniciar Sesión");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         subtitleLabel.setForeground(StyleUtils.SECONDARY_GRAY);
@@ -168,12 +157,10 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(0, 0, 40, 0);
         mainPanel.add(titlePanel, gbc);
         
-        // Label y campo de usuario
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(10, 10, 10, 10);
         
-        // Panel para campos de entrada
         JPanel fieldsPanel = new JPanel(new GridBagLayout());
         fieldsPanel.setOpaque(false);
         GridBagConstraints fgbc = new GridBagConstraints();
@@ -182,7 +169,6 @@ public class LoginWindow extends JFrame {
         fgbc.fill = GridBagConstraints.HORIZONTAL;
         fgbc.weightx = 1.0;
         
-        // Label y campo de usuario
         JLabel usuarioLabel = new JLabel("👤 Usuario");
         usuarioLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         usuarioLabel.setForeground(StyleUtils.DARK_TEXT);
@@ -204,7 +190,6 @@ public class LoginWindow extends JFrame {
         fgbc.insets = new Insets(0, 0, 20, 0);
         fieldsPanel.add(usuarioPanel, fgbc);
         
-        // Label y campo de contraseña
         JLabel contraseniaLabel = new JLabel("🔑 Contraseña");
         contraseniaLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         contraseniaLabel.setForeground(StyleUtils.DARK_TEXT);
@@ -212,11 +197,9 @@ public class LoginWindow extends JFrame {
         fgbc.insets = new Insets(0, 0, 8, 0);
         fieldsPanel.add(contraseniaLabel, fgbc);
         
-        // Panel para campo de contraseña con botón de ojo
         JPanel passwordPanel = new JPanel(new BorderLayout(0, 0));
         passwordPanel.setOpaque(false);
         
-        // Panel interno para los campos (se alternan)
         passwordFieldPanel = new JPanel(new CardLayout());
         passwordFieldPanel.setOpaque(false);
         passwordFieldPanel.add(contraseniaField, "hidden");
@@ -268,7 +251,6 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(0, 0, 20, 0);
         mainPanel.add(fieldsPanel, gbc);
         
-        // Panel de botones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         buttonPanel.setOpaque(false);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -284,14 +266,11 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(10, 0, 0, 0);
         mainPanel.add(buttonPanel, gbc);
         
-        // Agregar panel principal a la ventana
         add(mainPanel, BorderLayout.CENTER);
         
-        // Configurar tamaño y posición
         pack();
         setLocationRelativeTo(null);
         
-        // Crear ícono
         setIconImage(createAppIcon());
     }
     
@@ -299,7 +278,6 @@ public class LoginWindow extends JFrame {
      * Configura los eventos de los componentes
      */
     private void setupEvents() {
-        // Botón de login
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -307,7 +285,6 @@ public class LoginWindow extends JFrame {
             }
         });
         
-        // Botón de cancelar
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -356,7 +333,6 @@ public class LoginWindow extends JFrame {
             }
         });
         
-        // Focus inicial en el campo de usuario
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -558,7 +534,6 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(0, 0, 25, 0);
         mainPanel.add(textField, gbc);
         
-        // Panel de botones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setOpaque(false);
         

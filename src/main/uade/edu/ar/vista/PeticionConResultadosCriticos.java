@@ -31,16 +31,13 @@ public class PeticionConResultadosCriticos {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel principal con estilo moderno
         JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
 
-        // Crear un JPanel para el encabezado con estilo
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Panel para título y subtítulo con BoxLayout vertical
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -60,10 +57,8 @@ public class PeticionConResultadosCriticos {
         
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
-        // Agregar el JPanel del encabezado al JPanel principal
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla con estilo moderno
         JTable table = createTable();
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new EmptyBorder(10, 20, 20, 20));
@@ -75,14 +70,12 @@ public class PeticionConResultadosCriticos {
     }
 
     private JTable createTable() {
-        // Crear un modelo de tabla personalizado
         tableModel.addColumn("🆔 ID");
         tableModel.addColumn("🏥 Obra Social");
         tableModel.addColumn("👤 Paciente");
         tableModel.addColumn("🏢 Sucursal");
         tableModel.addColumn("📅 Fecha Carga");
 
-        // Agregar datos a la tabla
         peticionesLista = peticionController.getPeticionesConResultadosCriticos();
 
         for (PeticionDto peticion : peticionesLista) {
@@ -95,7 +88,6 @@ public class PeticionConResultadosCriticos {
             });
         }
 
-        // Crear la tabla con estilo moderno
         JTable table = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -116,5 +108,23 @@ public class PeticionConResultadosCriticos {
         return table;
     }
 
+    /**
+     * Actualiza la tabla de peticiones con resultados críticos.
+     * Recarga los datos desde el controlador y refresca la vista.
+     */
+    public void actualizarTablaPeticiones() {
+        tableModel.setRowCount(0); // Elimina todas las filas existentes en el modelo
+        peticionesLista = peticionController.getPeticionesConResultadosCriticos();
+        
+        for (PeticionDto peticion : peticionesLista) {
+            tableModel.addRow(new Object[]{
+                peticion.getId(),
+                peticion.getObraSocial(), 
+                peticion.getPaciente().getNombre() + " " + peticion.getPaciente().getApellido(),
+                "Sucursal " + peticion.getSucursal().getNumero(),
+                DateUtil.formatDateWithTime(peticion.getFechaCarga())
+            });
+        }
+    }
 
 }

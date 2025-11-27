@@ -115,7 +115,7 @@ public class LabManagementSystemTests {
         peticionesController.borrarPeticion(1);
         peticionesController.crearPeticion(new PeticionDto(1, "Swiss Medical", createDate("2023-06-01"), createDate("2023-06-02"), sucursal, paciente, practicas));
 
-        sucursalYUsuarioController.crearUsuario(new UsuarioDto(1, "Didy", "", createDate("1990-06-04"), Roles.LABORTISTA));
+        sucursalYUsuarioController.crearUsuario(new UsuarioDto(1, "Didy", "", createDate("1990-06-04"), Roles.LABORATORISTA));
         sucursalYUsuarioController.modificarUsuario(new UsuarioDto(1, "Didy", "", createDate("1990-06-04"), Roles.ADMINISTRADOR));
         sucursalYUsuarioController.eliminarUsuario(1);
 

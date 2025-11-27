@@ -1,3 +1,1 @@
 {"id":1,"nombre":"admin","contrasenia":"admin123","nacimiento":"Jan 1, 1990, 12:00:00 AM","rol":"ADMINISTRADOR"}
-{"id":2,"nombre":"Recepcionista","contrasenia":"recepcion123","nacimiento":"May 14, 1992, 9:00:00 PM","rol":"RECEPCION"}
-{"id":3,"nombre":"Laboratorista","contrasenia":"lab123","nacimiento":"Mar 19, 1988, 9:00:00 PM","rol":"LABORTISTA"}

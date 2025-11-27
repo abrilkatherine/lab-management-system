@@ -11,6 +11,7 @@ import java.util.List;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.util.StyleUtils;
+import main.uade.edu.ar.util.PermissionManager;
 
 
 public class SucursalTodas {
@@ -38,16 +39,13 @@ public class SucursalTodas {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel con estilo moderno
         JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
 
-        // Crear un JPanel para el encabezado con estilo
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Panel para título y subtítulo con BoxLayout vertical
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -70,15 +68,22 @@ public class SucursalTodas {
         // Botón "Agregar" con estilo moderno
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Sucursal", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         addButton.setPreferredSize(new Dimension(230, 40));
-        addButton.addActionListener(e -> {
-            AgregarSucursal agregarSucursal = new AgregarSucursal(sucursalYUsuarioController, this);
-            agregarSucursal.setVisible(true);
-        });
+        
+        // Validar permisos para mostrar el botón
+        PermissionManager permissionManager = PermissionManager.getInstance();
+        if (!permissionManager.puedeGestionarSucursales()) {
+            addButton.setEnabled(false);
+            addButton.setToolTipText("No tiene permisos para agregar sucursales");
+        } else {
+            addButton.addActionListener(e -> {
+                AgregarSucursal agregarSucursal = new AgregarSucursal(sucursalYUsuarioController, this);
+                agregarSucursal.setVisible(true);
+            });
+        }
         headerPanel.add(addButton, BorderLayout.EAST);
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de sucursales con estilos
         JTable table = createTable();
         StyleUtils.styleTable(table);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -89,27 +94,32 @@ public class SucursalTodas {
     }
 
     private JTable createTable() {
-        // Crear un modelo de tabla personalizado que haga que todas las celdas sean no editables
         tableModel.addColumn("🏢 Número");
+        tableModel.addColumn("📍 Dirección");
         tableModel.addColumn("✏️ Editar");
         tableModel.addColumn("🗑️ Eliminar");
 
         // Obtener la lista de sucursales mediante el controlador
         sucursalDtoList = sucursalYUsuarioController.getAllSucursales();
         for (SucursalDto sucursal : sucursalDtoList) {
-            tableModel.addRow(new Object[]{sucursal.getNumero(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{
+                sucursal.getNumero(), 
+                sucursal.getDireccion(),
+                "Info", 
+                "Eliminar"
+            });
         }
 
-        // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(1).setPreferredWidth(80); // Ancho de la columna "Editar"
-        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(0).setPreferredWidth(100); // Ancho de la columna "Número"
+        table.getColumnModel().getColumn(1).setPreferredWidth(300); // Ancho de la columna "Dirección"
+        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
 
         // Configurar renderer personalizado para las columnas de acciones
         table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
         table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
-        // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -118,7 +128,7 @@ public class SucursalTodas {
                 int row = e.getY() / table.getRowHeight();
 
                 // Verificar si se hizo clic en la columna "Editar"
-                if (column == 1 && row < table.getRowCount()) {
+                if (column == 2 && row < table.getRowCount()) {
                     // Obtener la información de la sucursal
                     int numero = (int) tableModel.getValueAt(row, 0);
 
@@ -138,7 +148,20 @@ public class SucursalTodas {
                 }
 
                 // Verificar si se hizo clic en la columna "Eliminar"
-                if (column == 2 && row < table.getRowCount()) {
+                if (column == 3 && row < table.getRowCount()) {
+                    // Validar permisos para eliminar
+                    PermissionManager permissionManager = PermissionManager.getInstance();
+                    if (!permissionManager.puedeGestionarSucursales()) {
+                        JOptionPane.showMessageDialog(
+                            table,
+                            "❌ No tiene permisos para eliminar sucursales.\n" +
+                            "Requiere rol: ADMINISTRADOR",
+                            "Acceso Denegado",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    
                     int numero = (int) tableModel.getValueAt(row, 0);
                     
                     // Diálogo de confirmación con botones personalizados
@@ -193,7 +216,12 @@ public class SucursalTodas {
         sucursalDtoList = null;// Elimina todas las filas existentes en el modelo
         sucursalDtoList = sucursalYUsuarioController.getAllSucursales();
         for (SucursalDto suc : sucursalDtoList) {
-            tableModel.addRow(new Object[]{suc.getNumero(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{
+                suc.getNumero(), 
+                suc.getDireccion(),
+                "Info", 
+                "Eliminar"
+            });
         }
     }
 }

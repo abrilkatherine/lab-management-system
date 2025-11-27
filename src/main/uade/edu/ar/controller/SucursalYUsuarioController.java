@@ -5,6 +5,7 @@ import main.uade.edu.ar.dao.ISucursalDao;
 import main.uade.edu.ar.dao.IUsuarioDao;
 import main.uade.edu.ar.dto.SucursalDto;
 import main.uade.edu.ar.dto.UsuarioDto;
+import main.uade.edu.ar.enums.Roles;
 import main.uade.edu.ar.mappers.SucursalMapper;
 import main.uade.edu.ar.mappers.UsuarioMapper;
 import main.uade.edu.ar.model.Peticion;
@@ -66,6 +67,15 @@ public class SucursalYUsuarioController {
     }
 
     public void crearSucursal(SucursalDto sucursalDTO) throws Exception {
+        // Validar que el responsable técnico tenga un rol apropiado
+        if (sucursalDTO.getResponsableTecnico() != null) {
+            UsuarioDto responsable = sucursalDTO.getResponsableTecnico();
+            if (!esRolValidoParaResponsable(responsable.getRol())) {
+                throw new Exception("El usuario con rol " + responsable.getRol() + 
+                    " no puede ser responsable técnico. Solo ADMINISTRADOR puede serlo.");
+            }
+        }
+        
         if (getSucursalPorId(sucursalDTO.getId()) == null) {
             Sucursal sucursal = SucursalMapper.toModel(sucursalDTO);
             sucursalDao.save(SucursalMapper.toModel(sucursalDTO));
@@ -83,6 +93,15 @@ public class SucursalYUsuarioController {
     }
 
     public void modificarSucursal(SucursalDto sucursalDTO) throws Exception {
+        // Validar que el responsable técnico tenga un rol apropiado
+        if (sucursalDTO.getResponsableTecnico() != null) {
+            UsuarioDto responsable = sucursalDTO.getResponsableTecnico();
+            if (!esRolValidoParaResponsable(responsable.getRol())) {
+                throw new Exception("El usuario con rol " + responsable.getRol() + 
+                    " no puede ser responsable técnico. Solo ADMINISTRADOR puede serlo.");
+            }
+        }
+        
         Sucursal sucursalExistente = sucursales.stream()
                 .filter(s -> s.getId() == sucursalDTO.getId())
                 .findFirst()
@@ -165,6 +184,42 @@ public class SucursalYUsuarioController {
                 .map(UsuarioMapper::toDto)
                 .collect(Collectors.toList());
     }
+    
+    /**
+     * Obtiene solo los usuarios que pueden ser responsables técnicos.
+     * Solo ADMINISTRADOR puede ser responsable técnico de una sucursal.
+     * 
+     * @return lista de usuarios válidos para ser responsables técnicos
+     */
+    public List<UsuarioDto> getUsuariosParaResponsableTecnico() {
+        return usuarios.stream()
+                .filter(u -> esRolValidoParaResponsable(u.getRol()))
+                .map(UsuarioMapper::toDto)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Verifica si un rol puede ser responsable técnico de una sucursal.
+     * Solo ADMINISTRADOR tiene control total y puede ser responsable técnico.
+     * 
+     * @param rol el rol a verificar
+     * @return true si el rol puede ser responsable técnico
+     */
+    private boolean esRolValidoParaResponsable(Roles rol) {
+        return rol == Roles.ADMINISTRADOR;
+    }
+    
+    /**
+     * Verifica si un usuario es responsable técnico de alguna sucursal.
+     * 
+     * @param usuarioId el ID del usuario a verificar
+     * @return true si el usuario es responsable de al menos una sucursal
+     */
+    private boolean esResponsableDeSucursal(int usuarioId) {
+        return sucursales.stream()
+                .anyMatch(s -> s.getResponsableTecnico() != null && 
+                             s.getResponsableTecnico().getId() == usuarioId);
+    }
 
     public Usuario crearUsuario(UsuarioDto usuarioDTO) throws Exception {
         if (getUsuario(usuarioDTO.getId()) == null) {
@@ -182,6 +237,16 @@ public class SucursalYUsuarioController {
                 .orElse(null);
 
         if (usuarioExistente != null) {
+            // Validar si se está cambiando el rol de un responsable técnico
+            if (usuarioExistente.getRol() == Roles.ADMINISTRADOR && 
+                usuarioDTO.getRol() != Roles.ADMINISTRADOR) {
+                // Verificar si es responsable de alguna sucursal
+                if (esResponsableDeSucursal(usuarioDTO.getId())) {
+                    throw new Exception("No se puede cambiar el rol del usuario porque es responsable técnico de una o más sucursales.\n" +
+                        "Primero debe reasignar las sucursales a otro administrador.");
+                }
+            }
+            
             String contrasenia = usuarioDTO.getContrasenia();
             
             if (contrasenia == null || contrasenia.trim().isEmpty()) {
@@ -205,6 +270,12 @@ public class SucursalYUsuarioController {
                 .orElse(null);
 
         if (usuario != null) {
+            // Validar si el usuario es responsable técnico de alguna sucursal
+            if (esResponsableDeSucursal(id)) {
+                throw new Exception("No se puede eliminar el usuario porque es responsable técnico de una o más sucursales.\n" +
+                    "Primero debe reasignar las sucursales a otro administrador.");
+            }
+            
             usuarioDao.delete(id);
             usuarios.remove(usuario);
         }
