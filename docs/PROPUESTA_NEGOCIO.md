@@ -79,15 +79,20 @@ Se propone el desarrollo de un **Sistema de Gestión de Laboratorio** en Java qu
 
 ### 3.4. Gestión de Sucursales
 - **Administración de múltiples sucursales** del laboratorio
-- **Asignación de responsable técnico** por sucursal
-- **Derivación automática** de peticiones entre sucursales
-- **Consulta de sucursales** con sus características
+- **Asignación de responsable técnico** por sucursal (solo usuarios con rol ADMINISTRADOR)
+- **Validación de integridad**: No se puede eliminar una sucursal con resultados cargados
+- **Derivación automática** de peticiones entre sucursales al eliminar una sucursal
+- **Consulta de sucursales** con sus características y dirección
 
 ### 3.5. Gestión de Usuarios
 - **Administración de usuarios** del sistema
-- **Sistema de roles** (Administrador, Técnico, Recepcionista, etc.)
-- **Control de acceso** basado en roles
-- **Autenticación de usuarios**
+- **Sistema de roles** definidos:
+  - **ADMINISTRADOR**: Control total del sistema, puede ser responsable técnico de sucursales
+  - **LABORATORISTA**: Gestión de resultados y visualización de peticiones críticas
+  - **RECEPCIONISTA**: Gestión de pacientes y creación de peticiones
+- **Control de acceso** basado en roles con validaciones de permisos
+- **Autenticación de usuarios** con gestión de sesiones
+- **Validaciones de integridad**: No se puede eliminar un usuario ADMINISTRADOR si es responsable técnico de sucursales
 
 ### 3.6. Reportes y Consultas
 - **Visualización de peticiones con resultados críticos** (requiere atención inmediata)
@@ -136,7 +141,7 @@ Se propone el desarrollo de un **Sistema de Gestión de Laboratorio** en Java qu
 
 ## 6. Tecnologías Utilizadas
 
-- **Java 8+**: Lenguaje de programación principal
+- **Java 21+**: Lenguaje de programación principal
 - **Swing**: Framework para la interfaz gráfica de usuario
 - **Gson**: Biblioteca para serialización/deserialización JSON
 - **Patrones de Diseño**: Factory, Singleton, DAO, DTO, Mapper
@@ -146,30 +151,31 @@ Se propone el desarrollo de un **Sistema de Gestión de Laboratorio** en Java qu
 
 ## 7. Casos de Uso Principales
 
-1. **Recepcionista registra nuevo paciente**
-   - Valida que el DNI no exista
-   - Ingresa datos completos del paciente
-   - Sistema guarda la información
+1. **RECEPCIONISTA registra nuevo paciente**
+   - Valida que el DNI no exista (único por sistema)
+   - Ingresa datos completos del paciente con validaciones (DNI, email, edad, género)
+   - Sistema guarda la información en formato JSON
 
-2. **Médico/Técnico crea petición de análisis**
-   - Selecciona paciente existente
-   - Asocia la petición a una sucursal
-   - Agrega prácticas médicas necesarias
-   - Define fechas de carga y entrega
+2. **RECEPCIONISTA/ADMINISTRADOR crea petición de análisis**
+   - Selecciona paciente existente del sistema
+   - Asocia la petición a una sucursal específica
+   - Agrega prácticas médicas necesarias a la petición
+   - Define fechas de carga y entrega con validaciones
 
-3. **Técnico carga resultados de práctica**
+3. **LABORATORISTA/ADMINISTRADOR carga resultados de práctica**
    - Selecciona la práctica a procesar
-   - Ingresa el resultado y su tipo
-   - Si es crítico, el sistema lo marca automáticamente
+   - Ingresa el resultado (valor numérico o texto) y su tipo
+   - Si es crítico, el sistema lo marca automáticamente para revisión urgente
 
 4. **Sistema detecta resultado crítico**
    - Marca automáticamente las peticiones con resultados críticos
    - Permite consultar estas peticiones en una vista especial
 
-5. **Administrador gestiona sucursales y usuarios**
-   - Crea/modifica/elimina sucursales
-   - Asigna responsable técnico a cada sucursal
-   - Administra usuarios y sus roles
+5. **ADMINISTRADOR gestiona sucursales y usuarios**
+   - Crea/modifica/elimina sucursales (con validaciones de integridad)
+   - Asigna responsable técnico a cada sucursal (solo puede asignar usuarios con rol ADMINISTRADOR)
+   - Administra usuarios y sus roles (con validaciones para evitar eliminar usuarios responsables de sucursales)
+   - Gestiona permisos y control de acceso por rol
 
 ---
 
@@ -190,7 +196,68 @@ Este sistema resuelve un problema real y recurrente en el sector de salud: **la 
 
 ---
 
-## 9. Conclusión
+## 9. Reglas de Negocio y Validaciones de Integridad
+
+El sistema implementa reglas de negocio estrictas para garantizar la integridad de los datos:
+
+### 9.1. Validaciones de Usuarios
+- ✅ **DNI único**: No pueden existir dos pacientes con el mismo DNI
+- ✅ **Roles válidos**: Solo ADMINISTRADOR, LABORATORISTA, RECEPCIONISTA
+- ✅ **Integridad referencial**: Un usuario ADMINISTRADOR no puede eliminarse si es responsable técnico de alguna sucursal
+- ✅ **Cambio de rol**: Un ADMINISTRADOR no puede cambiar su rol si es responsable técnico de sucursales
+
+### 9.2. Validaciones de Sucursales
+- ✅ **Responsable técnico**: Solo usuarios con rol ADMINISTRADOR pueden ser responsables técnicos
+- ✅ **Eliminación controlada**: Una sucursal solo puede eliminarse si no tiene peticiones con resultados cargados
+- ✅ **Derivación automática**: Al eliminar una sucursal, sus peticiones se derivan automáticamente a otra sucursal
+- ✅ **Dirección obligatoria**: Toda sucursal debe tener una dirección
+
+### 9.3. Validaciones de Pacientes
+- ✅ **DNI válido**: 7-8 dígitos numéricos
+- ✅ **Edad válida**: Entre 0 y 120 años
+- ✅ **Email válido**: Formato correcto de email
+- ✅ **Género obligatorio**: Debe seleccionar MASCULINO o FEMENINO
+- ✅ **Datos completos**: Nombre, apellido, domicilio son obligatorios
+
+### 9.4. Validaciones de Peticiones
+- ✅ **Paciente existente**: La petición debe asociarse a un paciente registrado
+- ✅ **Sucursal existente**: La petición debe asociarse a una sucursal activa
+- ✅ **Fechas válidas**: Fecha de entrega debe ser posterior a fecha de carga
+- ✅ **Obra social**: Campo obligatorio
+- ✅ **Al menos una práctica**: Una petición debe tener al menos una práctica asociada
+
+### 9.5. Validaciones de Prácticas y Resultados
+- ✅ **Código único**: No pueden existir dos prácticas con el mismo código
+- ✅ **Tipos de resultado**: NORMAL, CRITICO, RESERVADO
+- ✅ **Detección automática de tipo**:
+  - **RESERVADO**: Valores > 150 (requieren retiro presencial en sucursal)
+  - **CRÍTICO**: Valores entre 100-150 (requieren atención médica inmediata)
+  - **NORMAL**: Valores < 100 (dentro de parámetros esperados)
+- ✅ **Resultado obligatorio**: No puede cargarse una práctica sin resultado
+- ✅ **Valores numéricos o texto**: Sistema acepta ambos formatos
+
+### 9.6. Control de Permisos por Rol
+
+**ADMINISTRADOR** (Control total):
+- ✅ Todas las operaciones del sistema
+- ✅ Único rol que puede ser responsable técnico de sucursales
+- ✅ Gestión de usuarios y sucursales
+
+**LABORATORISTA** (Operaciones técnicas):
+- ✅ Ver pacientes, peticiones y prácticas
+- ✅ Cargar resultados de prácticas
+- ✅ Ver resultados críticos
+- ❌ No puede gestionar pacientes, sucursales ni usuarios
+
+**RECEPCIONISTA** (Operaciones administrativas):
+- ✅ Ver y gestionar pacientes
+- ✅ Crear y ver peticiones
+- ✅ Agregar prácticas a peticiones
+- ❌ No puede cargar resultados ni gestionar sucursales/usuarios
+
+---
+
+## 10. Conclusión
 
 Este sistema proporciona una solución completa e integral para la gestión de laboratorios de análisis clínicos, automatizando procesos manuales, reduciendo errores y mejorando la eficiencia operativa. La implementación de este sistema permitirá a los laboratorios modernizar sus operaciones y prepararse para futuras expansiones.
 

@@ -1,6 +1,7 @@
 package main.uade.edu.ar.vista;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
@@ -15,35 +16,27 @@ import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.dto.PeticionDto;
 import main.uade.edu.ar.dto.SucursalDto;
-
+import main.uade.edu.ar.util.StyleUtils;
 
 public class EditarPeticion extends JDialog {
     private JPanel contentPane;
-
     private JTextField obraSocial;
-
     private JTextField fechaCarga;
-
     private JTextField fechaEntrega;
-
     private JComboBox<String> sucursalComboBox;
-
     private JComboBox<String> pacienteComboBox;
-
-
     private JButton guardarButton;
-    private JButton cancelarCambiosButton;
+    private JButton cancelarButton;
+    
     private PeticionDto peticionDto;
     private List<SucursalDto> sucursales;
     private SucursalYUsuarioController sucursalYUsuarioController;
-
     private PacienteController pacienteController;
-
     private List<PacienteDto> pacientes;
     private PeticionController peticionController;
     private PeticionesTodas peticionesTodas;
 
-    public EditarPeticion(PeticionDto peticionDto, PeticionController peticionController, PeticionesTodas peticionesTodas,  SucursalYUsuarioController sucursalYUsuarioController, PacienteController pacienteController) {
+    public EditarPeticion(PeticionDto peticionDto, PeticionController peticionController, PeticionesTodas peticionesTodas, SucursalYUsuarioController sucursalYUsuarioController, PacienteController pacienteController) {
         this.peticionesTodas = peticionesTodas;
         this.sucursalYUsuarioController = sucursalYUsuarioController;
         this.pacienteController = pacienteController;
@@ -60,102 +53,110 @@ public class EditarPeticion extends JDialog {
         sucursales = sucursalYUsuarioController.getAllSucursales();
     }
 
-    private void cargarPacientes(){pacientes = pacienteController.getAllPacientes();}
-
+    private void cargarPacientes() {
+        pacientes = pacienteController.getAllPacientes();
+    }
 
     private void initializeUI() {
-        // Configurar el título del diálogo
         setTitle("Editar Petición");
         
-        contentPane = new JPanel();
-        contentPane.setLayout(new GridBagLayout());
+        contentPane = new JPanel(new BorderLayout(0, 20));
+        contentPane.setBackground(StyleUtils.WHITE);
+        contentPane.setBorder(new EmptyBorder(25, 30, 25, 30));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(StyleUtils.WHITE);
+        JLabel titleLabel = new JLabel("✏️ Editar Petición");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titleLabel.setForeground(StyleUtils.DARK_TEXT);
+        titlePanel.add(titleLabel, BorderLayout.WEST);
+        contentPane.add(titlePanel, BorderLayout.NORTH);
 
-        JLabel obraSocialLabel = new JLabel("Obra social:");
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        contentPane.add(obraSocialLabel, gbc);
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(StyleUtils.WHITE);
 
-        obraSocial = new JTextField();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        contentPane.add(obraSocial, gbc);
-
+        JPanel datosPeticionPanel = createSection("Datos de la Petición");
+        datosPeticionPanel.add(createFormField("Obra Social:", obraSocial = createStyledTextField()));
+        datosPeticionPanel.add(Box.createVerticalStrut(12));
+        
+        // ComboBox de sucursal
+        JPanel sucursalPanel = new JPanel(new BorderLayout(10, 5));
+        sucursalPanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        sucursalPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
         JLabel sucursalLabel = new JLabel("Sucursal:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 0.0;
-        contentPane.add(sucursalLabel, gbc);
-
+        sucursalLabel.setFont(StyleUtils.TEXT_FONT);
+        sucursalLabel.setForeground(StyleUtils.DARK_TEXT);
+        sucursalPanel.add(sucursalLabel, BorderLayout.NORTH);
+        
         sucursalComboBox = new JComboBox<>();
         for (SucursalDto sucursal : sucursales) {
             String displayText = sucursal.getNumero() + " _ " + sucursal.getId();
             sucursalComboBox.addItem(displayText);
         }
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        contentPane.add(sucursalComboBox, gbc);
-
+        sucursalComboBox.setFont(StyleUtils.TEXT_FONT);
+        sucursalComboBox.setPreferredSize(new Dimension(0, 42));
+        sucursalComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        sucursalComboBox.setBackground(StyleUtils.WHITE);
+        sucursalComboBox.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(StyleUtils.MEDIUM_GRAY, 1),
+            new EmptyBorder(5, 10, 5, 10)
+        ));
+        sucursalPanel.add(sucursalComboBox, BorderLayout.CENTER);
+        datosPeticionPanel.add(sucursalPanel);
+        datosPeticionPanel.add(Box.createVerticalStrut(12));
+        
+        // ComboBox de paciente
+        JPanel pacientePanel = new JPanel(new BorderLayout(10, 5));
+        pacientePanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        pacientePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
         JLabel pacienteLabel = new JLabel("Paciente:");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weightx = 0.0;
-        contentPane.add(pacienteLabel, gbc);
-
+        pacienteLabel.setFont(StyleUtils.TEXT_FONT);
+        pacienteLabel.setForeground(StyleUtils.DARK_TEXT);
+        pacientePanel.add(pacienteLabel, BorderLayout.NORTH);
+        
         pacienteComboBox = new JComboBox<>();
         for (PacienteDto paciente : pacientes) {
             String displayText = paciente.getNombre() + " - " + paciente.getApellido();
             pacienteComboBox.addItem(displayText);
         }
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        contentPane.add(pacienteComboBox, gbc);
+        pacienteComboBox.setFont(StyleUtils.TEXT_FONT);
+        pacienteComboBox.setPreferredSize(new Dimension(0, 42));
+        pacienteComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        pacienteComboBox.setBackground(StyleUtils.WHITE);
+        pacienteComboBox.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(StyleUtils.MEDIUM_GRAY, 1),
+            new EmptyBorder(5, 10, 5, 10)
+        ));
+        pacientePanel.add(pacienteComboBox, BorderLayout.CENTER);
+        datosPeticionPanel.add(pacientePanel);
+        datosPeticionPanel.add(Box.createVerticalStrut(12));
+        
+        // Campos de fecha en la misma línea
+        JPanel fechasPanel = new JPanel(new GridLayout(1, 2, 15, 0));
+        fechasPanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        fechasPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 95));
+        fechasPanel.add(createFormFieldWithHint("Fecha Carga:", 
+            fechaCarga = createStyledTextField(), "dd/MM/yyyy (ej: 20/04/2025)"));
+        fechasPanel.add(createFormFieldWithHint("Fecha Entrega:", 
+            fechaEntrega = createStyledTextField(), "dd/MM/yyyy (ej: 21/04/2025)"));
+        datosPeticionPanel.add(fechasPanel);
+        
+        formPanel.add(datosPeticionPanel);
+        contentPane.add(formPanel, BorderLayout.CENTER);
 
-        JLabel fechaInicio = new JLabel("Fecha carga:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        contentPane.add(fechaInicio, gbc);
-
-        fechaCarga = createPlaceholderTextField("dd/MM/yyyy (ej: 20/04/2025)");
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.weightx = 1.0;
-        contentPane.add(fechaCarga, gbc);
-
-        JLabel fechaFin = new JLabel("Fecha entrega:");
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.WEST;
-        contentPane.add(fechaFin, gbc);
-
-        fechaEntrega = createPlaceholderTextField("dd/MM/yyyy (ej: 21/04/2025)");
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.weightx = 1.0;
-        contentPane.add(fechaEntrega, gbc);
-
-        // Botón Guardar
-        guardarButton = new JButton("Guardar");
-        gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.EAST;
-        contentPane.add(guardarButton, gbc);
-
-        cancelarCambiosButton = new JButton("Cancelar");
-        gbc.gridx = 2;
-        gbc.gridy = 5;
-        gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.EAST;
-        contentPane.add(cancelarCambiosButton, gbc);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        buttonPanel.setBackground(StyleUtils.WHITE);
+        
+        cancelarButton = StyleUtils.createModernButton("Cancelar", StyleUtils.SECONDARY_GRAY, StyleUtils.WHITE);
+        cancelarButton.setPreferredSize(new Dimension(150, 45));
+        buttonPanel.add(cancelarButton);
+        
+        guardarButton = StyleUtils.createModernButton("Guardar", StyleUtils.PRIMARY_BLUE, StyleUtils.WHITE);
+        guardarButton.setPreferredSize(new Dimension(150, 45));
+        buttonPanel.add(guardarButton);
+        
+        contentPane.add(buttonPanel, BorderLayout.SOUTH);
 
         setContentPane(contentPane);
         setModal(true);
@@ -168,28 +169,101 @@ public class EditarPeticion extends JDialog {
             }
         });
 
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(), 
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), 
+            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        setSize(450, 400); // Tamaño más grande para mostrar todos los campos y el botón
-        setLocationRelativeTo(null); // Centrar el diálogo en la pantalla
+        setSize(750, 650);
+        setLocationRelativeTo(null);
+    }
+
+    private JPanel createSection(String title) {
+        JPanel section = new JPanel();
+        section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
+        section.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        section.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(StyleUtils.LIGHT_GRAY, 1),
+            new EmptyBorder(20, 20, 20, 20)
+        ));
+        
+        JLabel sectionTitle = new JLabel(title);
+        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        sectionTitle.setForeground(StyleUtils.PRIMARY_BLUE);
+        sectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sectionTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        section.add(sectionTitle);
+        section.add(Box.createVerticalStrut(15));
+        
+        return section;
+    }
+
+    private JPanel createFormField(String labelText, JTextField textField) {
+        JPanel fieldPanel = new JPanel(new BorderLayout(10, 5));
+        fieldPanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        fieldPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+        
+        JLabel label = new JLabel(labelText);
+        label.setFont(StyleUtils.TEXT_FONT);
+        label.setForeground(StyleUtils.DARK_TEXT);
+        fieldPanel.add(label, BorderLayout.NORTH);
+        fieldPanel.add(textField, BorderLayout.CENTER);
+        
+        return fieldPanel;
+    }
+
+    private JPanel createFormFieldWithHint(String labelText, JTextField textField, String hint) {
+        JPanel fieldPanel = new JPanel(new BorderLayout(10, 3));
+        fieldPanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
+        
+        JLabel label = new JLabel(labelText);
+        label.setFont(StyleUtils.TEXT_FONT);
+        label.setForeground(StyleUtils.DARK_TEXT);
+        fieldPanel.add(label, BorderLayout.NORTH);
+        fieldPanel.add(textField, BorderLayout.CENTER);
+        
+        JLabel hintLabel = new JLabel("💡 " + hint);
+        hintLabel.setFont(new Font("Segoe UI", Font.ITALIC, 10));
+        hintLabel.setForeground(StyleUtils.MEDIUM_GRAY);
+        fieldPanel.add(hintLabel, BorderLayout.SOUTH);
+        
+        return fieldPanel;
+    }
+
+    private JTextField createStyledTextField() {
+        JTextField field = new JTextField();
+        field.setFont(StyleUtils.TEXT_FONT);
+        field.setForeground(StyleUtils.DARK_TEXT);
+        field.setBackground(StyleUtils.WHITE);
+        field.setPreferredSize(new Dimension(0, 42));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(StyleUtils.MEDIUM_GRAY, 1),
+            new EmptyBorder(10, 15, 10, 15)
+        ));
+        
+        field.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                field.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(StyleUtils.PRIMARY_BLUE, 2),
+                    new EmptyBorder(9, 14, 9, 14)
+                ));
+            }
+            
+            @Override
+            public void focusLost(FocusEvent e) {
+                field.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(StyleUtils.MEDIUM_GRAY, 1),
+                    new EmptyBorder(10, 15, 10, 15)
+                ));
+            }
+        });
+        
+        return field;
     }
 
     private void setListeners() {
-        guardarButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onGuardar();
-            }
-        });
-
-        cancelarCambiosButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        guardarButton.addActionListener(e -> onGuardar());
+        cancelarButton.addActionListener(e -> onCancel());
     }
 
     private void cargarDatos() {
@@ -199,13 +273,13 @@ public class EditarPeticion extends JDialog {
         if (peticionDto.getFechaCarga() != null) {
             SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             fechaCarga.setText(displayFormat.format(peticionDto.getFechaCarga()));
-            fechaCarga.setForeground(Color.BLACK);
+            fechaCarga.setForeground(StyleUtils.DARK_TEXT);
         }
         
         if (peticionDto.getFechaEntrega() != null) {
             SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             fechaEntrega.setText(displayFormat.format(peticionDto.getFechaEntrega()));
-            fechaEntrega.setForeground(Color.BLACK);
+            fechaEntrega.setForeground(StyleUtils.DARK_TEXT);
         }
         
         sucursalComboBox.setSelectedItem(getDisplayText(peticionDto.getSucursal()));
@@ -215,11 +289,12 @@ public class EditarPeticion extends JDialog {
     private String getDisplayText(SucursalDto sucursalDto) {
         return sucursalDto.getNumero() + " - " + sucursalDto.getId();
     }
+    
     private String getDisplayTextPacientes(PacienteDto pacienteDto) {
         return pacienteDto.getNombre() + " - " + pacienteDto.getApellido();
     }
+    
     private void onGuardar() {
-        // Acciones de guardar
         String obra = obraSocial.getText();
         String sucursalText = (String) sucursalComboBox.getSelectedItem();
         SucursalDto sucursal = findSucursalByDisplayText(sucursalText);
@@ -228,29 +303,29 @@ public class EditarPeticion extends JDialog {
         String fechaC = fechaCarga.getText();
         String fechaI = fechaEntrega.getText();
 
-        // Intentar múltiples formatos de fecha para mayor flexibilidad
+        // Intentar múltiples formatos de fecha
         SimpleDateFormat[] dateFormats = {
-            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH),  // Formato latinoamericano
-            new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH),  // Formato americano
-            new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH),  // Formato ISO
-            new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)  // Formato completo existente
+            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH),
+            new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH),
+            new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH),
+            new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
         };
         
-        Date fechaCarga = null;
-        Date fechaEntrega = null;
+        Date fechaCargaDate = null;
+        Date fechaEntregaDate = null;
 
         // Parsear fecha de carga
-        if (!fechaC.isEmpty() && !fechaC.equals("MMM dd, yyyy, hh:mm:ss a")) {
+        if (!fechaC.isEmpty()) {
             for (SimpleDateFormat format : dateFormats) {
                 try {
-                    fechaCarga = format.parse(fechaC);
+                    fechaCargaDate = format.parse(fechaC);
                     break;
                 } catch (ParseException e) {
                     // Continuar con el siguiente formato
                 }
             }
             
-            if (fechaCarga == null) {
+            if (fechaCargaDate == null) {
                 JOptionPane.showMessageDialog(this, 
                     "❌ Error: Formato de fecha de carga inválido.\n\n" +
                     "📅 Formatos aceptados:\n" +
@@ -265,17 +340,17 @@ public class EditarPeticion extends JDialog {
         }
 
         // Parsear fecha de entrega
-        if (!fechaI.isEmpty() && !fechaI.equals("MMM dd, yyyy, hh:mm:ss a")) {
+        if (!fechaI.isEmpty()) {
             for (SimpleDateFormat format : dateFormats) {
                 try {
-                    fechaEntrega = format.parse(fechaI);
+                    fechaEntregaDate = format.parse(fechaI);
                     break;
                 } catch (ParseException e) {
                     // Continuar con el siguiente formato
                 }
             }
             
-            if (fechaEntrega == null) {
+            if (fechaEntregaDate == null) {
                 JOptionPane.showMessageDialog(this, 
                     "❌ Error: Formato de fecha de entrega inválido.\n\n" +
                     "📅 Formatos aceptados:\n" +
@@ -290,30 +365,35 @@ public class EditarPeticion extends JDialog {
         }
 
         // Validación: La fecha de entrega no puede ser anterior a la fecha de carga
-        if (fechaCarga != null && fechaEntrega != null && fechaEntrega.before(fechaCarga)) {
+        if (fechaCargaDate != null && fechaEntregaDate != null && fechaEntregaDate.before(fechaCargaDate)) {
             SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             JOptionPane.showMessageDialog(
                 this, 
                 "❌ Error: La fecha de entrega no puede ser anterior a la fecha de carga.\n\n" +
-                "📅 Fecha de carga: " + displayFormat.format(fechaCarga) + "\n" +
-                "📅 Fecha de entrega: " + displayFormat.format(fechaEntrega) + "\n\n" +
+                "📅 Fecha de carga: " + displayFormat.format(fechaCargaDate) + "\n" +
+                "📅 Fecha de entrega: " + displayFormat.format(fechaEntregaDate) + "\n\n" +
                 "Por favor, corrija las fechas e intente nuevamente.",
                 "⚠️ Fechas Inválidas", 
                 JOptionPane.WARNING_MESSAGE
             );
-            return; // No continuar con la modificación de la petición
+            return;
         }
 
-        PeticionDto nuevaPeticion = new PeticionDto(peticionDto.getId(), obra, fechaCarga, fechaEntrega, sucursal, paciente, peticionDto.getPracticas());
+        PeticionDto nuevaPeticion = new PeticionDto(peticionDto.getId(), obra, fechaCargaDate, fechaEntregaDate, sucursal, paciente, peticionDto.getPracticas());
         try {
             peticionController.modificarPeticion(nuevaPeticion);
             peticionesTodas.actualizarTablaPeticiones();
+            
+            JOptionPane.showMessageDialog(
+                this,
+                "✅ Petición actualizada correctamente",
+                "Éxito",
+                JOptionPane.INFORMATION_MESSAGE
+            );
             dispose();
         } catch (Exception e) {
-            // Manejo de la excepción
-            e.printStackTrace(); // Imprimir información de la excepción
-            // Opcional: Mostrar un mensaje de error al usuario
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "❌ " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -335,32 +415,6 @@ public class EditarPeticion extends JDialog {
             }
         }
         return null;
-    }
-
-    private JTextField createPlaceholderTextField(String placeholderText) {
-        JTextField textField = new JTextField();
-        textField.setForeground(Color.GRAY);
-        textField.setText(placeholderText);
-        
-        textField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (textField.getText().equals(placeholderText)) {
-                    textField.setText("");
-                    textField.setForeground(Color.BLACK);
-                }
-            }
-            
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (textField.getText().isEmpty()) {
-                    textField.setText(placeholderText);
-                    textField.setForeground(Color.GRAY);
-                }
-            }
-        });
-        
-        return textField;
     }
 
     private void onCancel() {

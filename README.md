@@ -63,13 +63,15 @@ make help
 
 ## 📋 Características
 
-- ✅ **Gestión de Pacientes** - CRUD completo con validaciones
-- ✅ **Gestión de Sucursales** - Con derivación automática de peticiones
+- ✅ **Gestión de Pacientes** - CRUD completo con validaciones (DNI único, email, edad, género)
+- ✅ **Gestión de Sucursales** - Con derivación automática de peticiones y validaciones de integridad
 - ✅ **Gestión de Peticiones** - Con prácticas y resultados asociados
-- ✅ **Gestión de Usuarios** - Con roles y permisos
-- ✅ **Interfaz Gráfica** - Desarrollada con Swing
-- ✅ **Persistencia** - Almacenamiento en archivos JSON
-- ✅ **Reglas de Negocio** - Validaciones de integridad implementadas
+- ✅ **Gestión de Usuarios** - Sistema de roles (ADMINISTRADOR, LABORATORISTA, RECEPCIONISTA) con permisos granulares
+- ✅ **Interfaz Gráfica Moderna** - Desarrollada con Swing, diseño intuitivo y responsivo
+- ✅ **Persistencia** - Almacenamiento en archivos JSON con Gson
+- ✅ **Reglas de Negocio** - Validaciones de integridad referencial implementadas
+- ✅ **Control de Acceso** - Sistema de permisos basado en roles
+- ✅ **Resultados Críticos** - Detección y visualización automática de resultados que requieren atención inmediata
 
 ## 🛠️ Tecnologías
 
@@ -132,11 +134,27 @@ El proyecto sigue una **arquitectura en capas** con separación clara de respons
 
 ### Patrones Implementados
 
-- ✅ **Singleton** - ControllerFactory, SessionManager, Controladores
+- ✅ **Singleton** - ControllerFactory, SessionManager, PermissionManager, Controladores
 - ✅ **Factory** - Creación de controladores con dependencias
-- ✅ **DAO** - Abstracción de persistencia
-- ✅ **DTO** - Separación entre capas
+- ✅ **DAO** - Abstracción de persistencia con GenericDAO
+- ✅ **DTO** - Separación entre capas con objetos de transferencia
+- ✅ **Mapper** - Conversión entre DTO y Model
 - ✅ **Dependency Injection** - Inyección de dependencias por constructor
 - ✅ **Template Method** - GenericDAO para operaciones CRUD
+- ✅ **Strategy** - Validaciones de datos con ValidacionUtil
+
+### Roles y Permisos
+
+| Funcionalidad | RECEPCIONISTA | LABORATORISTA | ADMINISTRADOR |
+|--------------|---------------|---------------|---------------|
+| Ver Pacientes | ✅ | ✅ | ✅ |
+| Agregar/Editar Pacientes | ✅ | ❌ | ✅ |
+| Ver Peticiones | ✅ | ✅ | ✅ |
+| Crear Peticiones | ✅ | ❌ | ✅ |
+| Cargar Resultados | ❌ | ✅ | ✅ |
+| Ver Resultados Críticos | ❌ | ✅ | ✅ |
+| Gestionar Sucursales | ❌ | ❌ | ✅ |
+| Gestionar Usuarios | ❌ | ❌ | ✅ |
+| Ser Responsable Técnico | ❌ | ❌ | ✅ |
 
 **🎓 Proyecto universitario para la materia Paradigma de Objetos - Universidad Argentina de la Empresa (UADE) - 2025**

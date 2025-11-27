@@ -3,6 +3,7 @@ package main.uade.edu.ar.vista;
 import main.uade.edu.ar.controller.SucursalYUsuarioController;
 import main.uade.edu.ar.dto.UsuarioDto;
 import main.uade.edu.ar.util.StyleUtils;
+import main.uade.edu.ar.util.PermissionManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -34,16 +35,13 @@ public class UsuariosTodos {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel con estilo moderno
         JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
 
-        // Crear un JPanel para el encabezado con estilo
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Panel para título y subtítulo con BoxLayout vertical
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -67,17 +65,22 @@ public class UsuariosTodos {
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Usuario", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         addButton.setPreferredSize(new Dimension(230, 40));
 
-        // Agregar ActionListener al botón "Agregar"
-        addButton.addActionListener(e -> {
-            AgregarUsuario agregarUsuario = new AgregarUsuario(sucursalYUsuarioController, this);
-            agregarUsuario.setVisible(true);
-        });
+        // Validar permisos para mostrar el botón
+        PermissionManager permissionManager = PermissionManager.getInstance();
+        if (!permissionManager.puedeGestionarUsuarios()) {
+            addButton.setEnabled(false);
+            addButton.setToolTipText("No tiene permisos para agregar usuarios");
+        } else {
+            addButton.addActionListener(e -> {
+                AgregarUsuario agregarUsuario = new AgregarUsuario(sucursalYUsuarioController, this);
+                agregarUsuario.setVisible(true);
+            });
+        }
 
         headerPanel.add(addButton, BorderLayout.EAST);
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de usuarios con estilos
         JTable table = createTable();
         StyleUtils.styleTable(table);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -88,7 +91,6 @@ public class UsuariosTodos {
     }
 
     private JTable createTable() {
-        // Configurar el modelo de tabla con iconos
         tableModel.addColumn("👤 Nombre");
         tableModel.addColumn("🔑 Rol");
         tableModel.addColumn("✏️ Editar");
@@ -100,7 +102,6 @@ public class UsuariosTodos {
             tableModel.addRow(new Object[]{usuario.getNombre(), usuario.getRol(), "✏️", "🗑️"});
         }
 
-        // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
         table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
         table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
@@ -109,7 +110,6 @@ public class UsuariosTodos {
         table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
         table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
-        // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -146,6 +146,19 @@ public class UsuariosTodos {
 
                 // Verificar si se hizo clic en la columna "Eliminar"
                 if (column == 3 && row < table.getRowCount()) {
+                    // Validar permisos para eliminar
+                    PermissionManager permissionManager = PermissionManager.getInstance();
+                    if (!permissionManager.puedeGestionarUsuarios()) {
+                        JOptionPane.showMessageDialog(
+                            table,
+                            "❌ No tiene permisos para eliminar usuarios.\n" +
+                            "Requiere rol: ADMINISTRADOR",
+                            "Acceso Denegado",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    
                     String nombreUsuario = (String) tableModel.getValueAt(row, 0);
                     
                     // Diálogo de confirmación con botones personalizados

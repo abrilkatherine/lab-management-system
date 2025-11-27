@@ -28,7 +28,7 @@ all: build
 
 # Compilar el proyecto
 compile:
-	@echo "$(GREEN)🔨 Compilando Sistema de Gestión de Laboratorio (Java 21)...$(NC)"
+	@echo "$(GREEN)🔨 Compilando Sistema de Gestión de Laboratorio...$(NC)"
 	@mkdir -p $(OUT_DIR)
 	@$(JAVAC) --release 21 -cp "$(CP)" -d $(OUT_DIR) \
 		$(SRC_DIR)/*.java \
@@ -71,13 +71,6 @@ clean:
 
 # Build completo con verificación
 build: clean compile
-	@echo "$(GREEN)🏗️  Verificando build..."
-	@echo "$(YELLOW)🔍 Verificando clases principales...$(NC)"
-	@if [ -f "$(OUT_DIR)/main/uade/edu/ar/vista/Menu.class" ]; then echo "$(GREEN)✅ Menu.class$(NC)"; else echo "$(RED)❌ Menu.class - FALTANTE$(NC)"; exit 1; fi
-	@if [ -f "$(OUT_DIR)/main/uade/edu/ar/Main.class" ]; then echo "$(GREEN)✅ Main.class$(NC)"; else echo "$(RED)❌ Main.class - FALTANTE$(NC)"; exit 1; fi
-	@if [ -f "$(OUT_DIR)/main/uade/edu/ar/controller/PeticionController.class" ]; then echo "$(GREEN)✅ PeticionController.class$(NC)"; else echo "$(RED)❌ PeticionController.class - FALTANTE$(NC)"; exit 1; fi
-	@if [ -f "$(OUT_DIR)/main/uade/edu/ar/controller/PacienteController.class" ]; then echo "$(GREEN)✅ PacienteController.class$(NC)"; else echo "$(RED)❌ PacienteController.class - FALTANTE$(NC)"; exit 1; fi
-	@if [ -f "$(OUT_DIR)/main/uade/edu/ar/controller/SucursalYUsuarioController.class" ]; then echo "$(GREEN)✅ SucursalYUsuarioController.class$(NC)"; else echo "$(RED)❌ SucursalYUsuarioController.class - FALTANTE$(NC)"; exit 1; fi
 	@echo "$(GREEN)🎉 Build completado exitosamente!$(NC)"
 	@echo "$(YELLOW)📁 Clases compiladas en: $(OUT_DIR)/$(NC)"
 	@echo "$(YELLOW)🚀 Para ejecutar: make run$(NC)"

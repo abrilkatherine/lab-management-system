@@ -41,16 +41,13 @@ public class PeticionesTodas {
     }
 
     public JPanel createPanel() {
-        // Crear un JPanel con estilo moderno
         JPanel panel = StyleUtils.createStyledPanel();
         panel.setLayout(new BorderLayout());
 
-        // Crear un JPanel para el encabezado con estilo
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Panel para título y subtítulo con BoxLayout vertical
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -81,7 +78,6 @@ public class PeticionesTodas {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Crear la tabla de peticiones con estilos
         JTable table = createTable();
         StyleUtils.styleTable(table);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -92,20 +88,17 @@ public class PeticionesTodas {
     }
 
     private JTable createTable() {
-        // Crear un modelo de tabla personalizado que haga que todas las celdas sean no editables
         tableModel.addColumn("🆔 ID");
         tableModel.addColumn("🔬 Prácticas");
         tableModel.addColumn("✏️ Editar");
         tableModel.addColumn("🗑️ Eliminar");
 
-        // Agregar filas de ejemplo a la tabla
             peticionesLista = peticionController.getAllPeticiones();
             for (PeticionDto peticion : peticionesLista) {
                 System.out.print(peticion);
                 tableModel.addRow(new Object[]{peticion.getId(),"Ver", "Info", "Eliminar"});
             }
 
-        // Crear la tabla y configurar el modelo
         JTable table = new JTable(tableModel);
         table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
         table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
@@ -114,7 +107,6 @@ public class PeticionesTodas {
         table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
         table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
 
-        // Agregar MouseListener a la tabla para detectar clics en las columnas "Editar" y "Eliminar"
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

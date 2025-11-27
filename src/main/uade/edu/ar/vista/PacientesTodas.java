@@ -11,6 +11,7 @@ import java.util.List;
 import main.uade.edu.ar.controller.PacienteController;
 import main.uade.edu.ar.dto.PacienteDto;
 import main.uade.edu.ar.util.StyleUtils;
+import main.uade.edu.ar.util.PermissionManager;
 
 public class PacientesTodas {
 
@@ -42,7 +43,6 @@ public class PacientesTodas {
         headerPanel.setBackground(StyleUtils.WHITE);
         headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Panel para título y subtítulo con BoxLayout vertical
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -62,10 +62,18 @@ public class PacientesTodas {
         
         JButton addButton = StyleUtils.createModernButton("➕ Agregar Paciente", StyleUtils.SUCCESS_GREEN, StyleUtils.WHITE);
         addButton.setPreferredSize(new Dimension(230, 40));
-        addButton.addActionListener(e -> {
-            AgregarPaciente agregarPaciente = new AgregarPaciente(pacienteController, this);
-            agregarPaciente.setVisible(true);
-        });
+        
+        // Validar permisos para mostrar el botón
+        PermissionManager permissionManager = PermissionManager.getInstance();
+        if (!permissionManager.puedeAgregarPacientes()) {
+            addButton.setEnabled(false);
+            addButton.setToolTipText("No tiene permisos para agregar pacientes");
+        } else {
+            addButton.addActionListener(e -> {
+                AgregarPaciente agregarPaciente = new AgregarPaciente(pacienteController, this);
+                agregarPaciente.setVisible(true);
+            });
+        }
         headerPanel.add(addButton, BorderLayout.EAST);
 
         panel.add(headerPanel, BorderLayout.NORTH);
@@ -82,18 +90,28 @@ public class PacientesTodas {
 
     private JTable createTable() {
         tableModel.addColumn("👤 Nombre");
+        tableModel.addColumn("👨 Apellido");
         tableModel.addColumn("🆔 DNI");
         tableModel.addColumn("✏️ Editar");
         tableModel.addColumn("🗑️ Eliminar");
 
         pacienteDtoList = pacienteController.getAllPacientes();
         for (PacienteDto paciente : pacienteDtoList) {
-            tableModel.addRow(new Object[]{paciente.getNombre(), paciente.getDni(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{
+                paciente.getNombre(), 
+                paciente.getApellido(),
+                paciente.getDni(), 
+                "Info", 
+                "Eliminar"
+            });
         }
 
         JTable table = new JTable(tableModel);
-        table.getColumnModel().getColumn(2).setPreferredWidth(80); // Ancho de la columna "Editar"
-        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Eliminar"
+        table.getColumnModel().getColumn(0).setPreferredWidth(150); // Ancho de la columna "Nombre"
+        table.getColumnModel().getColumn(1).setPreferredWidth(150); // Ancho de la columna "Apellido"
+        table.getColumnModel().getColumn(2).setPreferredWidth(120); // Ancho de la columna "DNI"
+        table.getColumnModel().getColumn(3).setPreferredWidth(80); // Ancho de la columna "Editar"
+        table.getColumnModel().getColumn(4).setPreferredWidth(80); // Ancho de la columna "Eliminar"
 
         table.getColumn("✏️ Editar").setCellRenderer(new ButtonRenderer("✏️", StyleUtils.PRIMARY_BLUE));
         table.getColumn("🗑️ Eliminar").setCellRenderer(new ButtonRenderer("🗑️", StyleUtils.DANGER_RED));
@@ -104,8 +122,8 @@ public class PacientesTodas {
                 int column = table.getColumnModel().getColumnIndexAtX(e.getX());
                 int row = e.getY() / table.getRowHeight();
 
-                if (column == 2 && row < table.getRowCount()) {
-                    int valorColumnaDNI = (int) tableModel.getValueAt(row, 1);
+                if (column == 3 && row < table.getRowCount()) {
+                    int valorColumnaDNI = (int) tableModel.getValueAt(row, 2);
 
                     PacienteDto paciente = null;
                     for (PacienteDto p : pacienteDtoList) {
@@ -120,9 +138,22 @@ public class PacientesTodas {
                     }
                 }
 
-                if (column == 3 && row < table.getRowCount()) {
-                    int valorColumnaDNI = (int) tableModel.getValueAt(row, 1);
-                    String nombrePaciente = (String) tableModel.getValueAt(row, 0);
+                if (column == 4 && row < table.getRowCount()) {
+                    // Validar permisos para eliminar
+                    PermissionManager permissionManager = PermissionManager.getInstance();
+                    if (!permissionManager.puedeEliminarPacientes()) {
+                        JOptionPane.showMessageDialog(
+                            table,
+                            "❌ No tiene permisos para eliminar pacientes.\n" +
+                            "Requiere rol: ADMINISTRADOR",
+                            "Acceso Denegado",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    
+                    int valorColumnaDNI = (int) tableModel.getValueAt(row, 2);
+                    String nombrePaciente = (String) tableModel.getValueAt(row, 0) + " " + (String) tableModel.getValueAt(row, 1);
                     
                     Object[] options = {"❌ No", "✅ Sí"};
                     int confirm = JOptionPane.showOptionDialog(
@@ -192,7 +223,13 @@ public class PacientesTodas {
         tableModel.setRowCount(0); // Elimina todas las filas existentes en el modelo
         pacienteDtoList = pacienteController.getAllPacientes();
         for (PacienteDto paciente : pacienteDtoList) {
-            tableModel.addRow(new Object[]{paciente.getNombre(),  paciente.getDni(), "Info", "Eliminar"});
+            tableModel.addRow(new Object[]{
+                paciente.getNombre(), 
+                paciente.getApellido(),
+                paciente.getDni(), 
+                "Info", 
+                "Eliminar"
+            });
         }
     }
 }
