@@ -36,8 +36,6 @@ make build
 make run
 ```
 
-**Login:** admin / admin123
-
 ---
 
 ## 🎨 Configurar IDE

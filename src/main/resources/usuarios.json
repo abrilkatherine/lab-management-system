@@ -1,1 +1,3 @@
 {"id":1,"nombre":"admin","contrasenia":"admin123","nacimiento":"Jan 1, 1990, 12:00:00 AM","rol":"ADMINISTRADOR"}
+{"id":618,"nombre":"Abril","contrasenia":"abril123","nacimiento":"Apr 20, 2024, 12:00:00 AM","rol":"RECEPCIONISTA"}
+{"id":368,"nombre":"Pepe","contrasenia":"pepe123","nacimiento":"May 10, 1990, 12:00:00 AM","rol":"LABORATORISTA"}

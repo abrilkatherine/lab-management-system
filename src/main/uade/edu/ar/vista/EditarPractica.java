@@ -100,14 +100,14 @@ public class EditarPractica extends JDialog {
         JPanel tipoPanel = new JPanel(new BorderLayout(10, 5));
         tipoPanel.setBackground(StyleUtils.VERY_LIGHT_GRAY);
         tipoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-        JLabel tipoTituloLabel = new JLabel("Tipo de Resultado (automático):");
+        JLabel tipoTituloLabel = new JLabel("Resultado del estudio:");
         tipoTituloLabel.setFont(StyleUtils.TEXT_FONT);
         tipoTituloLabel.setForeground(StyleUtils.DARK_TEXT);
         tipoPanel.add(tipoTituloLabel, BorderLayout.NORTH);
         
-        tipoResultadoLabel = new JLabel("NORMAL");
+        tipoResultadoLabel = new JLabel("");
         tipoResultadoLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tipoResultadoLabel.setForeground(StyleUtils.SUCCESS_GREEN);
+        tipoResultadoLabel.setForeground(StyleUtils.MEDIUM_GRAY);
         tipoResultadoLabel.setOpaque(true);
         tipoResultadoLabel.setBackground(StyleUtils.WHITE);
         tipoResultadoLabel.setBorder(BorderFactory.createCompoundBorder(
@@ -234,13 +234,17 @@ public class EditarPractica extends JDialog {
         if (resultado != null) {
             if(resultado.getTipoResultado() == TipoResultado.RESERVADO) {
                 valorResultadoTextField.setText("Retirar por sucursal");
+                // Mostrar directamente el tipo RESERVADO sin recalcular
+                mostrarTipoResultado(TipoResultado.RESERVADO);
             } else {
                 valorResultadoTextField.setText(String.valueOf(resultado.getValor()));
+                // Recalcular el tipo para resultados normales/críticos
+                actualizarTipoResultado();
             }
-            actualizarTipoResultado();
         } else {
+            // No hay resultado, dejar el campo vacío y limpiar el tipo
             valorResultadoTextField.setText("");
-            actualizarTipoResultado();
+            limpiarTipoResultado();
         }
     }
 
@@ -280,11 +284,27 @@ public class EditarPractica extends JDialog {
      * - NORMAL: Verde
      * - CRITICO: Naranja/Amarillo
      * - RESERVADO: Rojo
+     * Si el campo está vacío, limpia el label.
      */
     private void actualizarTipoResultado() {
         String valor = valorResultadoTextField.getText();
-        TipoResultado tipo = ResultadoUtil.determinarTipoResultado(valor);
         
+        // Si el campo está vacío, limpiar el label
+        if (valor == null || valor.trim().isEmpty()) {
+            limpiarTipoResultado();
+            return;
+        }
+        
+        TipoResultado tipo = ResultadoUtil.determinarTipoResultado(valor);
+        mostrarTipoResultado(tipo);
+    }
+    
+    /**
+     * Muestra el tipo de resultado en el label con el color correspondiente.
+     * 
+     * @param tipo el tipo de resultado a mostrar
+     */
+    private void mostrarTipoResultado(TipoResultado tipo) {
         tipoResultadoLabel.setText(tipo.toString());
         
         switch (tipo) {
@@ -298,5 +318,13 @@ public class EditarPractica extends JDialog {
                 tipoResultadoLabel.setForeground(StyleUtils.DANGER_RED);
                 break;
         }
+    }
+    
+    /**
+     * Limpia el label del tipo de resultado cuando no hay valor ingresado.
+     */
+    private void limpiarTipoResultado() {
+        tipoResultadoLabel.setText("");
+        tipoResultadoLabel.setForeground(StyleUtils.MEDIUM_GRAY);
     }
 }
